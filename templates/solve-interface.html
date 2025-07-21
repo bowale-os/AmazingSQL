@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solve a Question</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    
+    html, body {
+      height: 100vh;
+      margin: 0;
+      overflow-y: auto;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f7f9;
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    .navbar {
+      background-color: #1b3a57;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: white !important;
+    }
+
+    .navbar .btn-outline-light {
+      border-color: #ffffff88;
+    }
+
+    .navbar img {
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+    }
+
+
+    .container-fluid {
+      /* height: 100%; */
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .question-section {
+      width: 40%;
+      background-color: #e2f0f9;
+      padding: 1.5rem 1rem 1rem 1rem;
+       min-height: calc(100vh - 56px); /*subtract navbar height */
+      /* height: 100%; */
+      overflow-y: auto;
+    }
+
+    .right-panel {
+      width: 60%;
+      background-color: #ffffff;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+
+    .right-panel .card {
+        flex: 0 1 auto;
+        max-height:none;
+    }
+
+    .right-panel .card.sql-card {
+        flex: 1 1 65%; /* larger space for SQL editor */
+        max-height: 60%;
+    }
+
+    /* SQL card grows and shrinks dynamically */
+    .sql-card {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 150px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    
+
+    /* The SQL textarea should grow/shrink with the card */
+    .sql-card .card-body {
+      padding: 0.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+}
+
+    .right-panel .card.feedback-card {
+        flex: 0 1 30%; /* smaller space for feedback */
+        max-height: 30%;
+    }
+
+    .feedback-card {
+        flex: 0 1 auto;
+        max-height: 50%;
+        overflow-y: auto;
+        border: 1px solid #85929e;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .feedback-card .card-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+
+
+    .right-panel .card-body {
+        flex: 1;
+        overflow-y: auto;
+         padding: 1rem; /* add some padding */
+        scrollbar-width: thin;
+        scrollbar-color: #5dade2 #e2f0f9;
+    }
+
+    pre code {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+    }
+
+    .badge-tag {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        background-color: #1f4e79; /* deeper blue */
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .badge-tag:hover {
+        background-color: #163d60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #eef3f7;
+    }
+
+    .card-header {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    .sql-header {
+      background-color: #5dade2;
+      color: white;
+    }
+
+    .feedback-header {
+      background-color: #85929e;
+      color: white;
+    }
+
+    textarea.form-control {
+      background-color: #fbfcfc;
+      border: 1px solid #d6dbdf;
+      font-family: monospace;
+      resize: vertical;
+      flex-grow: 1;
+      min-height: 150px;
+    }
+
+    .generated-result-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+  </style>
+  {% from 'macros/profile_pic.html' import profile_pic %}
+</head>
+<body>
+                    <!-- Nav bar -->
+  <nav class="navbar navbar-light" style="background-color: #2c3e50;">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="{{url_for('dashboard')}}">AmazingSQL</a>
+      <div class="d-flex align-items-center gap-3">
+        
+        <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </div>
+  </nav>
+                      <!-- Left: Question Panel -->
+  <div class="container-fluid">
+    
+    <div class="question-section">
+      <h4><strong>{{ question.id }}. {{ question.title }}</strong></h4>
+      <p class="mt-3">{{ question.description }}</p>
+
+      <div class="mt-4">
+        <h6>Tags:</h6>
+        {% for tag in question.tags.split(',') %}
+          <span class="badge-tag" title="Click to filter by tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="mt-3">
+        <h6 class="mb-3">Table Schema:</h6>
+        <div class="bg-light border rounded p-2">
+          <pre class="mb-0"><code>{{ schema }}</code></pre>
+        </div>
+      </div>
+
+      {% if expected_output_list %}
+      <div class="mt-4">
+        <div class="card shadow-sm">
+          <div class="card-header">Expected Output Layout</div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    {% for header in question_headers %}
+                      <th>{{ header }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in expected_output_list %}
+                    <tr>
+                      {% for cell in row %}
+                        <td>{{ cell }}</td>
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+                          <!-- Right: Code & Feedback -->
+    <div class="right-panel">
+      <form action="{{url_for('run_sql', id=question.id)}}" method="post", novalidate>
+      <div class="card shadow-sm sql-card">
+        <div class="card-header sql-header">Your SQL</div>
+        <div class="card-body">
+          <textarea name='sql_query' class="form-control" placeholder="Write your SQL here...">{{user_query or ''}}</textarea>
+        </div>
+        <div class="p-3 border-top">
+            <button type="submit" class="btn btn-primary w-100">Run SQL</button>
+        </div>
+        </form>
+
+      </div>
+
+      <div class="card shadow-sm feedback-card">
+        <div class="card-header feedback-header">Feedback</div>
+        {% if error_message %}
+          <div class="alert alert-danger">{{ error_message }}</div>
+        {% endif %}
+        {% if feedback %}
+          <div class="alert alert-{{feedback[0]}}">{{ feedback[1] }}</div>
+        {% endif %}
+
+          <div class="card-body">
+                {% if result %}
+                <h6 class="generated-result-label">Generated result:</h6>
+                  {% if result is string %}
+                    <p class="text-danger">{{ result }}</p>
+                  {% else %}
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            {% for h in headers %}
+                              <th>{{ h }}</th>
+                            {% endfor %}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for row in result %}
+                            <tr>
+                              {% for cell in row %}
+                                <td>{{ cell }}</td>
+                              {% endfor %}
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="text-muted">Submit to see feedback on your correct query.</p>
+                {% endif %}
+            </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

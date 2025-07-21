@@ -1,0 +1,9 @@
+{% macro profile_pic(user, size=40) %}
+  <img src="{% if user.profile_pic and user.profile_pic.startswith('http') %}
+              {{ user.profile_pic }}
+            {% else %}
+              {{ url_for('static', filename='uploads/default.png') }}
+            {% endif %}"
+       alt="Profile"
+       style="width: {{ size }}px; height: {{ size }}px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+{% endmacro %}

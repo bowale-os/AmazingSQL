@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AmazingSQL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* Darker Background and Text */
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #121620; /* dark navy */
+      color: #e0e6f1; /* light gray-blue */
+    }
+
+    /* Hero Section with darker gradient */
+    .hero {
+      padding: 100px 20px;
+      text-align: center;
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      color: #e0e6f1;
+      box-shadow: inset 0 0 60px #1e40afaa;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      color: #cbd5e1;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Buttons with darker theme */
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .btn-primary {
+      background-color: #fbbf24; /* warm gold */
+      color: #1e293b;
+      box-shadow: 0 0 12px #fbbf24aa;
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: #f59e0b;
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px #f59e0baa;
+      outline: none;
+    }
+
+    .btn-secondary {
+      background-color: #374151; /* dark gray */
+      color: #e0e6f1;
+      box-shadow: 0 0 8px #374151aa;
+    }
+
+    .btn-secondary:hover, .btn-secondary:focus {
+      background-color: #4b5563;
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px #4b5563aa;
+      outline: none;
+    }
+
+    /* Features Section */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+      padding: 80px 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .feature {
+      background-color: #1f2937; /* dark slate */
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      color: #e0e6f1;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 1);
+    }
+
+    .feature h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #60a5fa; /* sky blue */
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .feature p {
+      font-size: 1rem;
+      color: #cbd5e1;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+      border-top: 1px solid #334155;
+      background-color: #111827;
+    }
+
+    footer a {
+      color: #60a5fa;
+      text-decoration: none;
+      margin: 0 8px;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover, footer a:focus {
+      text-decoration: underline;
+      color: #3b82f6;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Master SQL. Compete. Learn Faster.</h1>
+    <p>AmazingSQL is the best platform to sharpen your SQL skills with real-world challenges and instant feedback.</p>
+    <div class="cta-buttons">
+      <a href="{{ url_for('signup') }}" class="btn-primary" role="button" tabindex="0">Sign up</a>
+      <a href="{{ url_for('login') }}" class="btn-secondary" role="button" tabindex="0">Log in</a>
+
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature">
+      <h3>⚡ Instant Feedback</h3>
+      <p>Run queries and get results instantly. No setup required.</p>
+    </div>
+    <div class="feature">
+      <h3>🧠 Real SQL Problems</h3>
+      <p>Practice questions inspired by real interviews and company datasets.</p>
+    </div>
+    <div class="feature">
+      <h3>📊 Track Your Progress</h3>
+      <p>Earn XP and badges as you level up your SQL skills.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AmazingSQL. All rights reserved.</p>
+    <a href="#" rel="noopener noreferrer">About</a> •
+    <a href="mailto:danielsobowale67@gmail.com" rel="noopener noreferrer">Contact</a> •
+    <a href="https://www.github.com/bowale-os" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+</body>
+</html>

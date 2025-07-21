@@ -1,0 +1,1255 @@
+id,title,description,difficulty,tags,schema_sql,seed_data_sql,solution,expected_output
+1,Expensive Products,List all products with a price greater than $100.,easy,"select, filtering, comparison","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER
+);","INSERT INTO products (id, name, price) VALUES
+  (1, 'Laptop', 1200),
+  (2, 'Mouse', 25),
+  (3, 'Keyboard', 75),
+  (4, 'Monitor', 180);",SELECT * FROM products WHERE price > 100;,"[('Laptop', 1200), ('Monitor', 180)]"
+2,Students With Perfect Scores,Find names of students who scored 100 in any subject.,easy,"select, filtering","CREATE TABLE grades (
+  id INTEGER PRIMARY KEY,
+  student_name TEXT,
+  subject TEXT,
+  score INTEGER
+);","INSERT INTO grades (id, student_name, subject, score) VALUES
+  (1, 'Alice', 'Math', 95),
+  (2, 'Bob', 'Math', 100),
+  (3, 'Charlie', 'Science', 88),
+  (4, 'Diana', 'History', 100),
+  (5, 'Eve', 'Math', 72);",SELECT DISTINCT student_name FROM grades WHERE score = 100;,"[('Bob',), ('Diana',)]"
+3,Count of Orders Per Customer,Show how many orders each customer has placed.,easy,"group_by, aggregation, count","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  order_date DATE
+);","INSERT INTO orders (id, customer, order_date) VALUES
+  (1, 'Alice', '2024-05-01'),
+  (2, 'Bob', '2024-05-02'),
+  (3, 'Alice', '2024-05-03'),
+  (4, 'Diana', '2024-05-04'),
+  (5, 'Alice', '2024-05-05'),
+  (6, 'Bob', '2024-05-06');","SELECT customer, COUNT(*) AS order_count FROM orders GROUP BY customer ORDER BY customer;","[('Alice', 3), ('Bob', 2), ('Diana', 1)]"
+4,Employees in Engineering,List names of employees who work in the Engineering department.,easy,"select, filtering","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  department TEXT
+);","INSERT INTO employees (id, name, department) VALUES
+  (1, 'Alice', 'Engineering'),
+  (2, 'Bob', 'HR'),
+  (3, 'Charlie', 'Engineering'),
+  (4, 'Diana', 'Marketing'),
+  (5, 'Eve', 'Engineering');",SELECT name FROM employees WHERE department = 'Engineering';,"[('Alice',), ('Charlie',), ('Eve',)]"
+5,Highest Grade Awarded,What is the highest grade recorded in the system?,easy,"aggregation, max","CREATE TABLE grades (
+  student TEXT,
+  course TEXT,
+  score INTEGER
+);","INSERT INTO grades (student, course, score) VALUES
+  ('Alice', 'Math', 95),
+  ('Bob', 'Math', 100),
+  ('Charlie', 'Science', 88),
+  ('Diana', 'History', 100),
+  ('Eve', 'Math', 72);",SELECT MAX(score) AS highest_score FROM grades;,"[(100,)]"
+6,Total Revenue,Calculate the total revenue from all sales.,easy,"sum, aggregation","CREATE TABLE sales (
+  id INTEGER PRIMARY KEY,
+  amount INTEGER
+);","INSERT INTO sales (id, amount) VALUES
+  (1, 1000),
+  (2, 500),
+  (3, 700),
+  (4, 300),
+  (5, 600);",SELECT SUM(amount) AS total_revenue FROM sales;,"[(3100,)]"
+7,Courses With More Than 10 Students,Find courses that have more than 10 students enrolled.,medium,"group_by, having","CREATE TABLE enrollments (
+  student_id INTEGER,
+  course TEXT
+);","INSERT INTO enrollments (student_id, course) VALUES
+  (1, 'Math'),
+  (2, 'Math'),
+  (3, 'Science'),
+  (4, 'Math'),
+  (5, 'Math'),
+  (6, 'Science'),
+  (7, 'Math'),
+  (8, 'Math'),
+  (9, 'Science'),
+  (10, 'Math'),
+  (11, 'Math'),
+  (12, 'Science'),
+  (13, 'Math');","SELECT course, COUNT(student_id) AS num_students FROM enrollments GROUP BY course HAVING COUNT(student_id) > 10;","[('Math', 9)]"
+8,Doctors with Most Visits,List doctors sorted by number of patient visits.,medium,"group_by, order_by, count","CREATE TABLE visits (
+  id INTEGER PRIMARY KEY,
+  doctor TEXT
+);","INSERT INTO visits (id, doctor) VALUES
+  (1, 'Dr. Smith'),
+  (2, 'Dr. Johnson'),
+  (3, 'Dr. Smith'),
+  (4, 'Dr. Lee'),
+  (5, 'Dr. Smith'),
+  (6, 'Dr. Johnson');","SELECT doctor, COUNT(*) AS visit_count FROM visits GROUP BY doctor ORDER BY visit_count DESC;","[('Dr. Smith', 3), ('Dr. Johnson', 2), ('Dr. Lee', 1)]"
+9,Products Never Ordered,List all products that have never appeared in any order.,medium,"anti_join, left_join, null_filtering","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  product_id INTEGER
+);","INSERT INTO products (id, name) VALUES
+  (1, 'Laptop'),
+  (2, 'Mouse'),
+  (3, 'Keyboard'),
+  (4, 'Monitor');
+INSERT INTO orders (id, product_id) VALUES
+  (1, 1),
+  (2, 3);",SELECT p.name FROM products p LEFT JOIN orders o ON p.id = o.product_id WHERE o.product_id IS NULL;,"[('Mouse',), ('Monitor',)]"
+10,Top Spending Customer,Find the customer who has spent the most money.,medium,"group_by, sum, order_by, limit","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  amount INTEGER
+);","INSERT INTO orders (id, customer, amount) VALUES
+  (1, 'Alice', 1200),
+  (2, 'Bob', 200),
+  (3, 'Alice', 25),
+  (4, 'Diana', 180),
+  (5, 'Bob', 1000),
+  (6, 'Alice', 300);","SELECT customer, SUM(amount) AS total_spent FROM orders GROUP BY customer ORDER BY total_spent DESC LIMIT 1;","[('Alice', 1525)]"
+11,First Login Per User,"For each user, return the date of their first login.",medium,"group_by, min, dates","CREATE TABLE logins (
+  user_id INTEGER,
+  login_date DATE
+);","INSERT INTO logins (user_id, login_date) VALUES
+  (1, '2024-01-01'),
+  (2, '2024-01-03'),
+  (1, '2024-01-02'),
+  (3, '2024-01-04'),
+  (2, '2024-01-05');","SELECT user_id, MIN(login_date) AS first_login FROM logins GROUP BY user_id;","[(1, '2024-01-01'), (2, '2024-01-03'), (3, '2024-01-04')]"
+12,Students Taking Both Math and Science,List students enrolled in both Math and Science courses.,hard,"self_join, intersect, set_logic","CREATE TABLE enrollments (
+  student TEXT,
+  course TEXT
+);","INSERT INTO enrollments (student, course) VALUES
+  ('Alice', 'Math'),
+  ('Alice', 'Science'),
+  ('Bob', 'Math'),
+  ('Charlie', 'Science'),
+  ('Diana', 'Math'),
+  ('Diana', 'Science'),
+  ('Eve', 'History');","SELECT DISTINCT e1.student
+FROM enrollments e1
+JOIN enrollments e2 ON e1.student = e2.student
+WHERE e1.course = 'Math' AND e2.course = 'Science';","[('Alice',), ('Diana',)]"
+13,Monthly Sales Breakdown,Show total sales amount per month.,medium,"group_by, date_functions, sum","CREATE TABLE sales (
+  id INTEGER PRIMARY KEY,
+  sale_date DATE,
+  amount INTEGER
+);","INSERT INTO sales (id, sale_date, amount) VALUES
+  (1, '2024-01-05', 100),
+  (2, '2024-01-20', 200),
+  (3, '2024-02-10', 300),
+  (4, '2024-02-25', 150),
+  (5, '2024-03-01', 400);","SELECT strftime('%Y-%m', sale_date) AS month, SUM(amount) AS total_amount
+FROM sales
+GROUP BY month
+ORDER BY month;","[('2024-01', 300), ('2024-02', 450), ('2024-03', 400)]"
+14,Countries With >5 Customers,Find all countries with more than 5 customers.,easy,"group_by, having","CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  country TEXT
+);","INSERT INTO customers (id, country) VALUES
+  (1, 'USA'),
+  (2, 'USA'),
+  (3, 'Canada'),
+  (4, 'USA'),
+  (5, 'Canada'),
+  (6, 'USA'),
+  (7, 'USA'),
+  (8, 'USA'),
+  (9, 'Mexico'),
+  (10, 'Canada'),
+  (11, 'Canada');","SELECT country, COUNT(id) AS num_customers
+FROM customers
+GROUP BY country
+HAVING COUNT(id) > 5;","[('USA', 5), ('Canada', 4)]"
+15,Employees Without Managers,List employees who do not have a manager assigned.,medium,"null_filtering, filtering","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  manager_id INTEGER
+);","INSERT INTO employees (id, name, manager_id) VALUES
+  (1, 'Alice', NULL),
+  (2, 'Bob', 1),
+  (3, 'Charlie', NULL),
+  (4, 'Diana', 2),
+  (5, 'Eve', 3);",SELECT name FROM employees WHERE manager_id IS NULL;,"[('Alice',), ('Charlie',)]"
+16,Most Reviewed Product,Which product has the most reviews?,medium,"group_by, count, order_by, limit","CREATE TABLE reviews (
+  id INTEGER PRIMARY KEY,
+  product TEXT
+);","INSERT INTO reviews (id, product) VALUES
+  (1, 'Laptop'),
+  (2, 'Mouse'),
+  (3, 'Laptop'),
+  (4, 'Keyboard'),
+  (5, 'Laptop'),
+  (6, 'Mouse');","SELECT product, COUNT(*) AS review_count
+FROM reviews
+GROUP BY product
+ORDER BY review_count DESC
+LIMIT 1;","[('Laptop', 3)]"
+17,Longest Appointment Duration,Find the appointment with the longest duration.,medium,"datetime_math, order_by, limit","CREATE TABLE appointments (
+  id INTEGER PRIMARY KEY,
+  start_time DATETIME,
+  end_time DATETIME
+);","INSERT INTO appointments (id, start_time, end_time) VALUES
+  (1, '2024-07-01 09:00:00', '2024-07-01 10:00:00'),
+  (2, '2024-07-01 10:30:00', '2024-07-01 12:30:00'),
+  (3, '2024-07-01 13:00:00', '2024-07-01 13:45:00');","SELECT id, (julianday(end_time) - julianday(start_time)) * 24 * 60 AS duration_minutes
+FROM appointments
+ORDER BY duration_minutes DESC
+LIMIT 1;","[(2, 120.0)]"
+18,Employees Hired Last Year,List employees hired within the last calendar year.,medium,"date_filtering, where","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  hire_date DATE
+);","INSERT INTO employees (id, name, hire_date) VALUES
+  (1, 'Alice', '2023-03-15'),
+  (2, 'Bob', '2022-08-01'),
+  (3, 'Charlie', '2024-01-20'),
+  (4, 'Diana', '2023-11-05');",SELECT name FROM employees WHERE hire_date BETWEEN '2023-01-01' AND '2023-12-31';,"[('Alice',), ('Diana',)]"
+19,Daily Average Order Value,What is the average order value per day?,medium,"group_by, avg, date_functions","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  order_date DATE,
+  amount INTEGER
+);","INSERT INTO orders (id, order_date, amount) VALUES
+  (1, '2024-06-01', 100),
+  (2, '2024-06-01', 200),
+  (3, '2024-06-02', 300),
+  (4, '2024-06-02', 100),
+  (5, '2024-06-03', 400);","SELECT order_date, AVG(amount) AS avg_order_value
+FROM orders
+GROUP BY order_date
+ORDER BY order_date;","[('2024-06-01', 150.0), ('2024-06-02', 200.0), ('2024-06-03', 400.0)]"
+20,User Streaks,"For each user, count how many consecutive days they logged in.",hard,"window_function, date_math, streaks, cte","CREATE TABLE logins (
+  user_id INTEGER,
+  login_date DATE
+);","INSERT INTO logins (user_id, login_date) VALUES
+  (1, '2024-06-01'),
+  (1, '2024-06-02'),
+  (1, '2024-06-04'),
+  (2, '2024-06-01'),
+  (2, '2024-06-02'),
+  (2, '2024-06-03');","WITH streaks AS (
+  SELECT
+    user_id,
+    login_date,
+    DATE(login_date, '-' || ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY login_date) || ' days') AS grp
+  FROM logins
+)
+SELECT user_id, COUNT(*) AS streak_length
+FROM streaks
+GROUP BY user_id, grp
+ORDER BY user_id, streak_length DESC;","[(1, 2), (1, 1), (2, 3)]"
+21,List All Employees,Return the names of all employees in the company.,easy,"select, basics","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  department TEXT
+);","INSERT INTO employees (id, name, department) VALUES
+  (1, 'Alice', 'Engineering'),
+  (2, 'Bob', 'Marketing'),
+  (3, 'Charlie', 'HR');",SELECT name FROM employees;,"[('Alice',), ('Bob',), ('Charlie',)]"
+22,All Books in Library,Get the titles of all books available in the library.,easy,select,"CREATE TABLE books (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  author TEXT
+);","INSERT INTO books (id, title, author) VALUES
+  (1, '1984', 'George Orwell'),
+  (2, 'Sapiens', 'Yuval Noah Harari'),
+  (3, 'The Alchemist', 'Paulo Coelho');",SELECT title FROM books;,"[('1984',), ('Sapiens',), ('The Alchemist',)]"
+23,Get All Orders,Return all order IDs and their dates.,easy,select,"CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  order_date DATE
+);","INSERT INTO orders (id, order_date) VALUES
+  (1, '2024-06-01'),
+  (2, '2024-06-02'),
+  (3, '2024-06-03');","SELECT id, order_date FROM orders;","[(1, '2024-06-01'), (2, '2024-06-02'), (3, '2024-06-03')]"
+24,Customer Countries,List distinct countries where customers are from.,easy,"select, distinct","CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  country TEXT
+);","INSERT INTO customers (id, name, country) VALUES
+  (1, 'Alice', 'USA'),
+  (2, 'Bob', 'Canada'),
+  (3, 'Charlie', 'USA'),
+  (4, 'Diana', 'UK');",SELECT DISTINCT country FROM customers;,"[('USA',), ('Canada',), ('UK',)]"
+25,Product Inventory,List names and prices of all products.,easy,select,"CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER
+);","INSERT INTO products (id, name, price) VALUES
+  (1, 'Laptop', 1200),
+  (2, 'Mouse', 25),
+  (3, 'Monitor', 300);","SELECT name, price FROM products;","[('Laptop', 1200), ('Mouse', 25), ('Monitor', 300)]"
+26,All Departments,Show all unique departments from the employee table.,easy,"select, distinct","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  department TEXT
+);","INSERT INTO employees (id, name, department) VALUES
+  (1, 'Alice', 'Engineering'),
+  (2, 'Bob', 'Marketing'),
+  (3, 'Charlie', 'Engineering'),
+  (4, 'Diana', 'Sales');",SELECT DISTINCT department FROM employees;,"[('Engineering',), ('Marketing',), ('Sales',)]"
+27,Customer Names,Display names of all customers.,easy,select,"CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);","INSERT INTO customers (id, name) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Charlie');",SELECT name FROM customers;,"[('Alice',), ('Bob',), ('Charlie',)]"
+28,All Book Authors,List all distinct authors in the library catalog.,easy,"select, distinct","CREATE TABLE books (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  author TEXT
+);","INSERT INTO books (id, title, author) VALUES
+  (1, '1984', 'George Orwell'),
+  (2, 'Sapiens', 'Yuval Noah Harari'),
+  (3, 'Homo Deus', 'Yuval Noah Harari');",SELECT DISTINCT author FROM books;,"[('George Orwell',), ('Yuval Noah Harari',)]"
+29,Products Over $100,Find all products with a price above $100.,easy,"select, filter","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER
+);","INSERT INTO products (id, name, price) VALUES
+  (1, 'Laptop', 1200),
+  (2, 'Mouse', 25),
+  (3, 'Monitor', 300);",SELECT name FROM products WHERE price > 100;,"[('Laptop',), ('Monitor',)]"
+30,Recent Orders Only,"Get all orders made after June 1, 2024.",easy,"select, filtering, dates","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  order_date DATE
+);","INSERT INTO orders (id, customer, order_date) VALUES
+  (1, 'Alice', '2024-06-01'),
+  (2, 'Bob', '2024-06-02'),
+  (3, 'Charlie', '2024-06-03');",SELECT customer FROM orders WHERE order_date > '2024-06-01';,"[('Bob',), ('Charlie',)]"
+31,Active Subscriptions,Return all users with an active subscription.,easy,"select, filtering","CREATE TABLE subscriptions (
+  user_id INTEGER,
+  status TEXT
+);","INSERT INTO subscriptions (user_id, status) VALUES
+  (1, 'active'),
+  (2, 'inactive'),
+  (3, 'active'),
+  (4, 'canceled');",SELECT user_id FROM subscriptions WHERE status = 'active';,"[(1,), (3,)]"
+32,Cheap Items,List items that cost less than 50.,easy,"select, filtering","CREATE TABLE items (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER
+);","INSERT INTO items (id, name, price) VALUES
+  (1, 'Notebook', 10),
+  (2, 'Backpack', 60),
+  (3, 'Pen', 5);",SELECT name FROM items WHERE price < 50;,"[('Notebook',), ('Pen',)]"
+33,All Cities in Orders,List the cities associated with orders.,easy,select,"CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  city TEXT
+);","INSERT INTO orders (id, city) VALUES
+  (1, 'New York'),
+  (2, 'Los Angeles'),
+  (3, 'New York');",SELECT DISTINCT city FROM orders;,"[('New York',), ('Los Angeles',)]"
+34,Count All Customers,Find the total number of customers.,easy,"count, aggregation","CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);","INSERT INTO customers (id, name) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Charlie');",SELECT COUNT(*) FROM customers;,"[(3,)]"
+35,Students With A Grades,Find students with scores >= 90.,easy,"select, filtering, comparison","CREATE TABLE scores (
+  student TEXT,
+  score INTEGER
+);","INSERT INTO scores (student, score) VALUES
+  ('Alice', 95),
+  ('Bob', 89),
+  ('Charlie', 90);",SELECT student FROM scores WHERE score >= 90;,"[('Alice',), ('Charlie',)]"
+36,Completed Tasks,Show tasks marked as completed.,easy,"select, filtering","CREATE TABLE tasks (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  status TEXT
+);","INSERT INTO tasks (id, title, status) VALUES
+  (1, 'Buy milk', 'completed'),
+  (2, 'Clean room', 'pending'),
+  (3, 'Submit form', 'completed');",SELECT title FROM tasks WHERE status = 'completed';,"[('Buy milk',), ('Submit form',)]"
+37,Users in Nigeria,List users whose country is Nigeria.,easy,"select, filter","CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  country TEXT
+);","INSERT INTO users (id, name, country) VALUES
+  (1, 'Alice', 'USA'),
+  (2, 'Bob', 'Nigeria'),
+  (3, 'Charlie', 'Nigeria');",SELECT name FROM users WHERE country = 'Nigeria';,"[('Bob',), ('Charlie',)]"
+38,Show Event Names,List all the event names in the calendar.,easy,select,"CREATE TABLE events (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  date DATE
+);","INSERT INTO events (id, name, date) VALUES
+  (1, 'Meeting', '2024-06-01'),
+  (2, 'Conference', '2024-06-05'),
+  (3, 'Hackathon', '2024-06-10');",SELECT name FROM events;,"[('Meeting',), ('Conference',), ('Hackathon',)]"
+39,Get All Categories,Return all unique product categories.,easy,"select, distinct","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  category TEXT
+);","INSERT INTO products (id, name, category) VALUES
+  (1, 'Laptop', 'Electronics'),
+  (2, 'Shirt', 'Clothing'),
+  (3, 'Keyboard', 'Electronics');",SELECT DISTINCT category FROM products;,"[('Electronics',), ('Clothing',)]"
+40,Unpaid Invoices,Find all invoices that haven't been paid.,easy,"select, filtering","CREATE TABLE invoices (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  paid BOOLEAN
+);","INSERT INTO invoices (id, customer, paid) VALUES
+  (1, 'Alice', 1),
+  (2, 'Bob', 0),
+  (3, 'Charlie', 0);",SELECT customer FROM invoices WHERE paid = 0;,"[('Bob',), ('Charlie',)]"
+41,Second Highest Salary,Find the second highest salary from the employees table.,medium,"subquery, order_by, limit","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  salary INTEGER
+);","INSERT INTO employees (id, name, salary) VALUES
+  (1, 'Alice', 60000),
+  (2, 'Bob', 75000),
+  (3, 'Charlie', 80000),
+  (4, 'Diana', 75000),
+  (5, 'Eve', 90000);","SELECT DISTINCT salary FROM employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;","[(80000,)]"
+42,Total Sales Per Employee,Show total sales for each employee.,medium,"group_by, sum, joins","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+CREATE TABLE sales (
+  id INTEGER PRIMARY KEY,
+  employee_id INTEGER,
+  amount INTEGER
+);","INSERT INTO employees (id, name) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Charlie');
+
+INSERT INTO sales (id, employee_id, amount) VALUES
+  (1, 1, 500),
+  (2, 1, 300),
+  (3, 2, 700),
+  (4, 3, 200),
+  (5, 2, 100);","SELECT e.name, SUM(s.amount) AS total_sales
+FROM employees e
+JOIN sales s ON e.id = s.employee_id
+GROUP BY e.name
+ORDER BY total_sales DESC;","[('Bob', 800), ('Alice', 800), ('Charlie', 200)]"
+43,Users With No Posts,Find users who have not posted anything.,medium,"left_join, anti_join, null_filtering","CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  username TEXT
+);
+CREATE TABLE posts (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER
+);","INSERT INTO users (id, username) VALUES
+  (1, 'alice'),
+  (2, 'bob'),
+  (3, 'charlie');
+
+INSERT INTO posts (id, user_id) VALUES
+  (1, 1),
+  (2, 1),
+  (3, 2);","SELECT u.username FROM users u
+LEFT JOIN posts p ON u.id = p.user_id
+WHERE p.user_id IS NULL;","[('charlie',)]"
+44,Average Order Value By Customer,Calculate average order value per customer.,medium,"group_by, avg","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  amount INTEGER
+);","INSERT INTO orders (id, customer, amount) VALUES
+  (1, 'Alice', 100),
+  (2, 'Bob', 200),
+  (3, 'Alice', 300),
+  (4, 'Charlie', 400),
+  (5, 'Bob', 100);","SELECT customer, AVG(amount) AS avg_order_value
+FROM orders
+GROUP BY customer
+ORDER BY avg_order_value DESC;","[('Charlie', 400.0), ('Alice', 200.0), ('Bob', 150.0)]"
+45,Duplicate Emails,Find all users who have duplicate email addresses.,medium,"group_by, having, count","CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  email TEXT
+);","INSERT INTO users (id, email) VALUES
+  (1, 'alice@example.com'),
+  (2, 'bob@example.com'),
+  (3, 'alice@example.com'),
+  (4, 'charlie@example.com');","SELECT email FROM users
+GROUP BY email
+HAVING COUNT(*) > 1;","[('alice@example.com',)]"
+46,Longest Tenured Employee,Find the employee who has worked the longest.,medium,"min, order_by, limit","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  hire_date DATE
+);","INSERT INTO employees (id, name, hire_date) VALUES
+  (1, 'Alice', '2019-05-01'),
+  (2, 'Bob', '2021-07-15'),
+  (3, 'Charlie', '2018-11-03');","SELECT name FROM employees
+ORDER BY hire_date ASC
+LIMIT 1;","[('Charlie',)]"
+47,Daily Revenue,Compute the revenue per day from sales.,medium,"group_by, sum, date","CREATE TABLE sales (
+  id INTEGER PRIMARY KEY,
+  sale_date DATE,
+  amount INTEGER
+);","INSERT INTO sales (id, sale_date, amount) VALUES
+  (1, '2024-06-01', 100),
+  (2, '2024-06-01', 150),
+  (3, '2024-06-02', 200),
+  (4, '2024-06-03', 250);","SELECT sale_date, SUM(amount) AS daily_revenue
+FROM sales
+GROUP BY sale_date
+ORDER BY sale_date;","[('2024-06-01', 250), ('2024-06-02', 200), ('2024-06-03', 250)]"
+48,Most Active Customers,Show top 2 customers who made the most orders.,medium,"group_by, count, limit","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT
+);","INSERT INTO orders (id, customer) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Alice'),
+  (4, 'Charlie'),
+  (5, 'Bob'),
+  (6, 'Alice');","SELECT customer, COUNT(*) AS order_count
+FROM orders
+GROUP BY customer
+ORDER BY order_count DESC
+LIMIT 2;","[('Alice', 3), ('Bob', 2)]"
+49,Posts Per Category,Count how many posts exist in each category.,medium,"group_by, count","CREATE TABLE posts (
+  id INTEGER PRIMARY KEY,
+  category TEXT
+);","INSERT INTO posts (id, category) VALUES
+  (1, 'Tech'),
+  (2, 'Health'),
+  (3, 'Tech'),
+  (4, 'Tech'),
+  (5, 'Finance');","SELECT category, COUNT(*) AS post_count
+FROM posts
+GROUP BY category
+ORDER BY post_count DESC;","[('Tech', 3), ('Health', 1), ('Finance', 1)]"
+50,Average Age Per Department,Find the average age of employees per department.,medium,"group_by, avg","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  department TEXT,
+  age INTEGER
+);","INSERT INTO employees (id, name, department, age) VALUES
+  (1, 'Alice', 'Engineering', 30),
+  (2, 'Bob', 'HR', 40),
+  (3, 'Charlie', 'Engineering', 35),
+  (4, 'Diana', 'HR', 45),
+  (5, 'Eve', 'Marketing', 29);","SELECT department, AVG(age) AS avg_age
+FROM employees
+GROUP BY department;","[('Engineering', 32.5), ('HR', 42.5), ('Marketing', 29.0)]"
+51,Department With Highest Average Salary,Find the department with the highest average employee salary.,medium,"group_by, avg, order_by, limit","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  department TEXT,
+  salary INTEGER
+);","INSERT INTO employees (id, name, department, salary) VALUES
+  (1, 'Alice', 'Engineering', 90000),
+  (2, 'Bob', 'Engineering', 85000),
+  (3, 'Charlie', 'Marketing', 70000),
+  (4, 'Diana', 'Marketing', 72000),
+  (5, 'Eve', 'HR', 95000);","SELECT department, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department
+ORDER BY avg_salary DESC
+LIMIT 1;","[('HR', 95000.0)]"
+52,Repeat Visitors,List all visitors who have visited more than once.,medium,"group_by, count, filtering","CREATE TABLE visits (
+  id INTEGER PRIMARY KEY,
+  visitor_name TEXT,
+  visit_date DATE
+);","INSERT INTO visits (id, visitor_name, visit_date) VALUES
+  (1, 'Alice', '2024-06-01'),
+  (2, 'Bob', '2024-06-01'),
+  (3, 'Alice', '2024-06-02'),
+  (4, 'Charlie', '2024-06-03'),
+  (5, 'Bob', '2024-06-04');","SELECT visitor_name
+FROM visits
+GROUP BY visitor_name
+HAVING COUNT(*) > 1;","[('Alice',), ('Bob',)]"
+53,Inactive Customers,Find customers who have not made any orders.,medium,"anti_join, left_join, null_filtering","CREATE TABLE customers (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer_id INTEGER
+);","INSERT INTO customers (id, name) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Charlie'),
+  (4, 'Diana');
+INSERT INTO orders (id, customer_id) VALUES
+  (1, 1),
+  (2, 2);","SELECT c.name
+FROM customers c
+LEFT JOIN orders o ON c.id = o.customer_id
+WHERE o.customer_id IS NULL;","[('Charlie',), ('Diana',)]"
+54,Top 3 Most Expensive Products,List the three most expensive products.,medium,"order_by, limit, select","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER
+);","INSERT INTO products (id, name, price) VALUES
+  (1, 'Laptop', 1200),
+  (2, 'Monitor', 300),
+  (3, 'Mouse', 50),
+  (4, 'Tablet', 450),
+  (5, 'Desk', 200);","SELECT name, price
+FROM products
+ORDER BY price DESC
+LIMIT 3;","[('Laptop', 1200), ('Tablet', 450), ('Monitor', 300)]"
+55,Orders on Weekend,Return all orders made on a Saturday or Sunday.,medium,"date_functions, filtering, weekday","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  order_date DATE,
+  amount INTEGER
+);","INSERT INTO orders (id, order_date, amount) VALUES
+  (1, '2024-07-05', 100),
+  (2, '2024-07-06', 200),
+  (3, '2024-07-07', 300),
+  (4, '2024-07-08', 400);","SELECT *
+FROM orders
+WHERE strftime('%w', order_date) IN ('0', '6');","[(2, '2024-07-06', 200), (3, '2024-07-07', 300)]"
+56,Second Highest Salary,Find the employee(s) with the second highest salary.,medium,"subquery, order_by, limit","CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  salary INTEGER
+);","INSERT INTO employees (id, name, salary) VALUES
+  (1, 'Alice', 80000),
+  (2, 'Bob', 90000),
+  (3, 'Charlie', 95000),
+  (4, 'Diana', 90000);","SELECT name, salary
+FROM employees
+WHERE salary = (
+  SELECT DISTINCT salary
+  FROM employees
+  ORDER BY salary DESC
+  LIMIT 1 OFFSET 1
+);","[('Bob', 90000), ('Diana', 90000)]"
+57,Patients With No Appointments,Find patients who have not booked any appointments.,medium,"anti_join, null_filtering","CREATE TABLE patients (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+CREATE TABLE appointments (
+  id INTEGER PRIMARY KEY,
+  patient_id INTEGER
+);","INSERT INTO patients (id, name) VALUES
+  (1, 'Alice'),
+  (2, 'Bob'),
+  (3, 'Charlie');
+INSERT INTO appointments (id, patient_id) VALUES
+  (1, 1);","SELECT name
+FROM patients p
+LEFT JOIN appointments a ON p.id = a.patient_id
+WHERE a.patient_id IS NULL;","[('Bob',), ('Charlie',)]"
+58,Order Frequency Per Customer,Show the number of orders made by each customer.,medium,"group_by, count","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer_name TEXT,
+  order_date DATE
+);","INSERT INTO orders (id, customer_name, order_date) VALUES
+  (1, 'Alice', '2024-01-01'),
+  (2, 'Bob', '2024-01-01'),
+  (3, 'Alice', '2024-01-03'),
+  (4, 'Charlie', '2024-01-04'),
+  (5, 'Alice', '2024-01-05');","SELECT customer_name, COUNT(*) AS total_orders
+FROM orders
+GROUP BY customer_name;","[('Alice', 3), ('Bob', 1), ('Charlie', 1)]"
+59,Unpopular Products,List products that have not been ordered more than once.,medium,"group_by, having, joins","CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  product_id INTEGER
+);","INSERT INTO products (id, name) VALUES
+  (1, 'Laptop'),
+  (2, 'Mouse'),
+  (3, 'Keyboard');
+INSERT INTO orders (id, product_id) VALUES
+  (1, 1),
+  (2, 2),
+  (3, 1);","SELECT p.name
+FROM products p
+JOIN orders o ON p.id = o.product_id
+GROUP BY p.name
+HAVING COUNT(o.id) <= 1;","[('Mouse',)]"
+60,Average Monthly Spending,Calculate the average amount spent by each customer per month.,medium,"group_by, date_functions, avg","CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  customer TEXT,
+  order_date DATE,
+  amount INTEGER
+);","INSERT INTO orders (id, customer, order_date, amount) VALUES
+  (1, 'Alice', '2024-01-15', 200),
+  (2, 'Alice', '2024-01-20', 300),
+  (3, 'Bob', '2024-02-01', 100),
+  (4, 'Bob', '2024-02-18', 300);","SELECT customer, strftime('%Y-%m', order_date) AS month, AVG(amount) AS avg_monthly_spend
+FROM orders
+GROUP BY customer, month;","[('Alice', '2024-01', 250.0), ('Bob', '2024-02', 200.0)]"
+61,Best-Selling Genre Each Month,"For each month, return the genre that had the highest number of books sold.",medium,"group_by, date_functions, max, subquery","CREATE TABLE book_sales (
+  sale_id INTEGER,
+  genre TEXT,
+  sale_date DATE,
+  quantity INTEGER
+);","INSERT INTO book_sales VALUES
+  (1, 'Mystery', '2024-01-10', 120),
+  (2, 'Sci-Fi', '2024-01-15', 140),
+  (3, 'Fantasy', '2024-01-20', 100),
+  (4, 'Mystery', '2024-02-02', 90),
+  (5, 'Fantasy', '2024-02-18', 160),
+  (6, 'Sci-Fi', '2024-02-22', 70);","WITH monthly_sales AS (
+  SELECT strftime('%Y-%m', sale_date) AS month, genre, SUM(quantity) AS total
+  FROM book_sales
+  GROUP BY month, genre
+)
+SELECT month, genre, total
+FROM (
+  SELECT *, RANK() OVER (PARTITION BY month ORDER BY total DESC) AS rnk
+  FROM monthly_sales
+) WHERE rnk = 1;","[('2024-01', 'Sci-Fi', 140), ('2024-02', 'Fantasy', 160)]"
+62,Most Active Volunteers by Location,Find the volunteer with the most hours logged in each city.,medium,"group_by, window_function, partition, max","CREATE TABLE volunteer_hours (
+  name TEXT,
+  city TEXT,
+  hours INTEGER
+);","INSERT INTO volunteer_hours VALUES
+  ('Amina', 'Nashville', 12),
+  ('James', 'Nashville', 25),
+  ('Luis', 'Chicago', 15),
+  ('Amina', 'Chicago', 30),
+  ('James', 'Chicago', 28);","SELECT name, city, hours FROM (
+  SELECT *, RANK() OVER (PARTITION BY city ORDER BY hours DESC) AS rnk
+  FROM volunteer_hours
+) WHERE rnk = 1;","[('James', 'Nashville', 25), ('Amina', 'Chicago', 30)]"
+63,Tech Meetup Repeat Attendees,List all people who attended more than one tech meetup.,medium,"group_by, having, filtering","CREATE TABLE meetups (
+  attendee TEXT,
+  event_name TEXT,
+  event_type TEXT
+);","INSERT INTO meetups VALUES
+  ('Daniel', 'AI & Society', 'Tech'),
+  ('Zoe', 'Data Science Jam', 'Tech'),
+  ('Daniel', 'Hack the Planet', 'Tech'),
+  ('Luis', 'Open Mic Night', 'Arts'),
+  ('Zoe', 'Spoken Word Fest', 'Arts');","SELECT attendee
+FROM meetups
+WHERE event_type = 'Tech'
+GROUP BY attendee
+HAVING COUNT(*) > 1;","[('Daniel',)]"
+64,Lost and Found Resolution Time,Calculate the average time (in hours) it takes to return found items.,medium,"datetime_math, avg, timestamp_diff","CREATE TABLE lost_found (
+  item TEXT,
+  reported DATETIME,
+  returned DATETIME
+);","INSERT INTO lost_found VALUES
+  ('Backpack', '2024-06-01 08:00', '2024-06-01 14:00'),
+  ('Laptop', '2024-06-02 10:30', '2024-06-02 17:30'),
+  ('Phone', '2024-06-03 09:00', '2024-06-03 13:00');","SELECT AVG((julianday(returned) - julianday(reported)) * 24) AS avg_hours
+FROM lost_found;","[(6.0,)]"
+65,Second Most Popular Workshop,Find the workshop with the second highest number of sign-ups.,medium,"order_by, rank, limit, group_by","CREATE TABLE workshop_signups (
+  attendee TEXT,
+  workshop TEXT
+);","INSERT INTO workshop_signups VALUES
+  ('Amari', 'Intro to Python'),
+  ('Zara', 'Data Viz Magic'),
+  ('Lee', 'Intro to Python'),
+  ('Tariq', 'Build Your First API'),
+  ('Zara', 'Intro to Python'),
+  ('Amari', 'Data Viz Magic');","SELECT workshop, COUNT(*) AS num_signups
+FROM workshop_signups
+GROUP BY workshop
+ORDER BY num_signups DESC
+LIMIT 1 OFFSET 1;","[('Data Viz Magic', 2)]"
+66,Weekly Meal Orders,Show total number of meals ordered per week.,medium,"group_by, date_functions, sum","CREATE TABLE meal_orders (
+  order_id INTEGER,
+  meal_name TEXT,
+  order_date DATE,
+  quantity INTEGER
+);","INSERT INTO meal_orders VALUES
+  (1, 'Jollof Rice', '2024-06-01', 12),
+  (2, 'Efo Riro', '2024-06-03', 10),
+  (3, 'Jollof Rice', '2024-06-08', 15),
+  (4, 'Ofada Rice', '2024-06-09', 5);","SELECT strftime('%W', order_date) AS week, SUM(quantity) AS total
+FROM meal_orders
+GROUP BY week;","[('22', 22), ('23', 20)]"
+67,Most Common Customer Complaint,What is the most frequent complaint category from customer feedback?,medium,"group_by, count, order_by, limit","CREATE TABLE complaints (
+  id INTEGER,
+  category TEXT,
+  comment TEXT
+);","INSERT INTO complaints VALUES
+  (1, 'Delivery', 'Late delivery'),
+  (2, 'Quality', 'Product broken'),
+  (3, 'Delivery', 'Did not arrive'),
+  (4, 'Quality', 'Missing parts'),
+  (5, 'Support', 'No response');","SELECT category, COUNT(*) AS complaint_count
+FROM complaints
+GROUP BY category
+ORDER BY complaint_count DESC
+LIMIT 1;","[('Delivery', 2)]"
+68,Unsubscribed Newsletter Users,List users who were once subscribed but have now unsubscribed.,medium,"anti_join, filtering","CREATE TABLE newsletter_history (
+  email TEXT,
+  status TEXT
+);","INSERT INTO newsletter_history VALUES
+  ('joan@example.com', 'Subscribed'),
+  ('miles@example.com', 'Subscribed'),
+  ('joan@example.com', 'Unsubscribed'),
+  ('sam@example.com', 'Subscribed');","SELECT DISTINCT email
+FROM newsletter_history
+WHERE email IN (
+  SELECT email FROM newsletter_history WHERE status = 'Unsubscribed'
+) AND email NOT IN (
+  SELECT email FROM newsletter_history WHERE status = 'Subscribed'
+  AND email NOT IN (
+    SELECT email FROM newsletter_history WHERE status = 'Unsubscribed'
+  )
+);","[('joan@example.com',)]"
+69,Average Grade Per Assignment,Calculate the average grade for each assignment across all students.,medium,"group_by, avg","CREATE TABLE assignments (
+  student_name TEXT,
+  assignment TEXT,
+  grade INTEGER
+);","INSERT INTO assignments VALUES
+  ('Kemi', 'Project A', 88),
+  ('Tunde', 'Project A', 92),
+  ('Kemi', 'Project B', 79),
+  ('Tunde', 'Project B', 85);","SELECT assignment, AVG(grade) AS avg_grade
+FROM assignments
+GROUP BY assignment;","[('Project A', 90.0), ('Project B', 82.0)]"
+70,Popular Time Slots for Yoga,Return time slots that have more than 3 bookings.,medium,"group_by, having, count","CREATE TABLE yoga_bookings (
+  id INTEGER,
+  timeslot TEXT,
+  attendee TEXT
+);","INSERT INTO yoga_bookings VALUES
+  (1, '7AM', 'Lola'),
+  (2, '8AM', 'James'),
+  (3, '7AM', 'Femi'),
+  (4, '7AM', 'Zoe'),
+  (5, '8AM', 'Daniel'),
+  (6, '7AM', 'Aliyah');","SELECT timeslot, COUNT(*) AS num_bookings
+FROM yoga_bookings
+GROUP BY timeslot
+HAVING COUNT(*) > 3;","[('7AM', 4)]"
+71,Top Exporting Countries by Value,List countries with total export value exceeding $1 billion.,medium,"group_by, having, sum","CREATE TABLE exports (
+  country TEXT,
+  export_value INTEGER
+);","INSERT INTO exports (country, export_value) VALUES
+  ('Brazil', 1200000000),
+  ('Nigeria', 800000000),
+  ('India', 1500000000),
+  ('Vietnam', 950000000),
+  ('Germany', 2000000000),
+  ('Kenya', 300000000);","SELECT country, SUM(export_value) AS total_exports
+FROM exports
+GROUP BY country
+HAVING total_exports > 1000000000;","[('Brazil', 1200000000), ('India', 1500000000), ('Germany', 2000000000)]"
+72,Average Student Attendance by School,Calculate the average attendance percentage per school.,easy,"group_by, avg","CREATE TABLE attendance (
+  student_name TEXT,
+  school TEXT,
+  attendance_percent INTEGER
+);","INSERT INTO attendance (student_name, school, attendance_percent) VALUES
+  ('Amina', 'Nairobi International', 95),
+  ('Raj', 'Delhi Public School', 88),
+  ('Maria', 'São Paulo Academy', 92),
+  ('Chen', 'Beijing Central', 85),
+  ('Amina', 'Nairobi International', 90);","SELECT school, AVG(attendance_percent) AS avg_attendance
+FROM attendance
+GROUP BY school;","[('Nairobi International', 92.5), ('Delhi Public School', 88.0), ('São Paulo Academy', 92.0), ('Beijing Central', 85.0)]"
+73,Products Not Sold in Last Quarter,Find products that were not sold in the last quarter.,medium,"left_join, null_filtering, date_filtering","CREATE TABLE products (
+  product_id INTEGER PRIMARY KEY,
+  product_name TEXT
+);
+
+CREATE TABLE sales (
+  sale_id INTEGER PRIMARY KEY,
+  product_id INTEGER,
+  sale_date DATE
+);","INSERT INTO products (product_id, product_name) VALUES
+  (1, 'Saffron'),
+  (2, 'Oolong Tea'),
+  (3, 'Cocoa Beans'),
+  (4, 'Olive Oil');
+
+INSERT INTO sales (sale_id, product_id, sale_date) VALUES
+  (1, 1, '2025-04-01'),
+  (2, 2, '2025-02-15'),
+  (3, 1, '2025-01-10');","SELECT p.product_name
+FROM products p
+LEFT JOIN sales s ON p.product_id = s.product_id AND s.sale_date >= '2025-01-01'
+WHERE s.sale_date IS NULL;","[('Cocoa Beans',), ('Olive Oil',)]"
+74,Authors With Multiple Books,List authors who have published more than 3 books.,medium,"group_by, having, count","CREATE TABLE books (
+  book_id INTEGER PRIMARY KEY,
+  author TEXT,
+  title TEXT
+);","INSERT INTO books (book_id, author, title) VALUES
+  (1, 'Chinua Achebe', 'Things Fall Apart'),
+  (2, 'Haruki Murakami', 'Kafka on the Shore'),
+  (3, 'Chinua Achebe', 'No Longer at Ease'),
+  (4, 'Haruki Murakami', 'Norwegian Wood'),
+  (5, 'Haruki Murakami', '1Q84'),
+  (6, 'Haruki Murakami', 'Kafkaesque'),
+  (7, 'Isabel Allende', 'The House of the Spirits');","SELECT author, COUNT(*) AS books_published
+FROM books
+GROUP BY author
+HAVING books_published > 3;","[('Haruki Murakami', 4)]"
+75,Average Temperature by City,Calculate the average daily temperature recorded for each city.,easy,"group_by, avg","CREATE TABLE weather (
+  city TEXT,
+  date DATE,
+  temperature_celsius INTEGER
+);","INSERT INTO weather (city, date, temperature_celsius) VALUES
+  ('Tokyo', '2025-06-01', 27),
+  ('Delhi', '2025-06-01', 35),
+  ('Tokyo', '2025-06-02', 26),
+  ('Delhi', '2025-06-02', 36),
+  ('Cairo', '2025-06-01', 34);","SELECT city, AVG(temperature_celsius) AS avg_temp
+FROM weather
+GROUP BY city;","[('Tokyo', 26.5), ('Delhi', 35.5), ('Cairo', 34.0)]"
+76,Employees With No Sales,Find employees who have not made any sales this year.,medium,"left_join, null_filtering, date_filtering","CREATE TABLE employees (
+  employee_id INTEGER PRIMARY KEY,
+  employee_name TEXT
+);
+
+CREATE TABLE sales (
+  sale_id INTEGER PRIMARY KEY,
+  employee_id INTEGER,
+  sale_date DATE,
+  amount INTEGER
+);","INSERT INTO employees (employee_id, employee_name) VALUES
+  (1, 'Fatima'),
+  (2, 'Liam'),
+  (3, 'Nguyen'),
+  (4, 'Amara');
+
+INSERT INTO sales (sale_id, employee_id, sale_date, amount) VALUES
+  (1, 1, '2025-03-15', 5000),
+  (2, 3, '2025-04-22', 3000);","SELECT e.employee_name
+FROM employees e
+LEFT JOIN sales s ON e.employee_id = s.employee_id AND s.sale_date BETWEEN '2025-01-01' AND '2025-12-31'
+WHERE s.sale_id IS NULL;","[('Liam',), ('Amara',)]"
+77,Cities with Multiple Airports,List cities that have more than one airport.,easy,"group_by, having","CREATE TABLE airports (
+  airport_id INTEGER PRIMARY KEY,
+  city TEXT,
+  airport_name TEXT
+);","INSERT INTO airports (airport_id, city, airport_name) VALUES
+  (1, 'London', 'Heathrow'),
+  (2, 'London', 'Gatwick'),
+  (3, 'New York', 'JFK'),
+  (4, 'New York', 'LaGuardia'),
+  (5, 'Tokyo', 'Haneda');","SELECT city, COUNT(airport_id) AS airport_count
+FROM airports
+GROUP BY city
+HAVING airport_count > 1;","[('London', 2), ('New York', 2)]"
+78,Orders With Above Average Value,Find all orders where the amount is greater than the average order amount.,medium,"subquery, comparison, filtering","CREATE TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  customer TEXT,
+  amount INTEGER
+);","INSERT INTO orders (order_id, customer, amount) VALUES
+  (1, 'Sofia', 120),
+  (2, 'Raj', 80),
+  (3, 'Fatima', 200),
+  (4, 'Liam', 150),
+  (5, 'Maria', 90);",SELECT * FROM orders WHERE amount > (SELECT AVG(amount) FROM orders);,"[ (1, 'Sofia', 120), (3, 'Fatima', 200), (4, 'Liam', 150) ]"
+79,Top Performing Branches,List bank branches with deposits over $2 million.,hard,"group_by, having, sum","CREATE TABLE deposits (
+  branch TEXT,
+  amount INTEGER
+);","INSERT INTO deposits (branch, amount) VALUES
+  ('Istanbul Central', 1500000),
+  ('Istanbul Central', 1000000),
+  ('Mumbai West', 500000),
+  ('Mumbai West', 600000),
+  ('Sao Paulo South', 3000000);","SELECT branch, SUM(amount) AS total_deposits
+FROM deposits
+GROUP BY branch
+HAVING total_deposits > 2000000;","[('Istanbul Central', 2500000), ('Sao Paulo South', 3000000)]"
+80,Longest Road Trips,Find road trips longer than 500 kilometers.,hard,"filtering, comparison, where","CREATE TABLE road_trips (
+  trip_id INTEGER PRIMARY KEY,
+  driver_name TEXT,
+  distance_km INTEGER
+);","INSERT INTO road_trips (trip_id, driver_name, distance_km) VALUES
+  (1, 'Lara', 450),
+  (2, 'Emeka', 700),
+  (3, 'Sasha', 510),
+  (4, 'Tariq', 480);",SELECT * FROM road_trips WHERE distance_km > 500;,"[ (2, 'Emeka', 700), (3, 'Sasha', 510) ]"
+81,Top Farmers in Northern Ghana,List farmers with total harvest above 5000 kg this season.,medium,"group_by, having, sum","CREATE TABLE harvests (
+  farmer_name TEXT,
+  region TEXT,
+  harvest_kg INTEGER
+);","INSERT INTO harvests (farmer_name, region, harvest_kg) VALUES
+  ('Kwame', 'Northern Ghana', 3000),
+  ('Amina', 'Northern Ghana', 2500),
+  ('Kwame', 'Northern Ghana', 2500),
+  ('Ngozi', 'Southern Nigeria', 4500),
+  ('Amina', 'Northern Ghana', 1500);","SELECT farmer_name, SUM(harvest_kg) AS total_harvest
+FROM harvests
+WHERE region = 'Northern Ghana'
+GROUP BY farmer_name
+HAVING total_harvest > 5000;","[('Kwame', 5500)]"
+82,Popular Mobile Apps in Southeast Asia,Find mobile apps with more than 1 million downloads.,easy,"filtering, comparison","CREATE TABLE mobile_apps (
+  app_name TEXT,
+  country TEXT,
+  downloads INTEGER
+);","INSERT INTO mobile_apps (app_name, country, downloads) VALUES
+  ('ChatWave', 'Indonesia', 1200000),
+  ('FoodieFun', 'Thailand', 800000),
+  ('TravelBuddy', 'Vietnam', 1500000),
+  ('EduLearn', 'Philippines', 500000);","SELECT app_name, country
+FROM mobile_apps
+WHERE downloads > 1000000;","[('ChatWave', 'Indonesia'), ('TravelBuddy', 'Vietnam')]"
+83,Average Monthly Rainfall in West Africa,Calculate average rainfall (mm) for each month recorded across all stations.,medium,"group_by, avg, date_functions","CREATE TABLE rainfall_data (
+  station TEXT,
+  record_date DATE,
+  rainfall_mm INTEGER
+);","INSERT INTO rainfall_data (station, record_date, rainfall_mm) VALUES
+  ('Station A', '2025-04-01', 120),
+  ('Station B', '2025-04-15', 110),
+  ('Station A', '2025-05-01', 140),
+  ('Station B', '2025-05-10', 130),
+  ('Station C', '2025-04-20', 100);","SELECT strftime('%Y-%m', record_date) AS month, AVG(rainfall_mm) AS avg_rainfall
+FROM rainfall_data
+GROUP BY month;","[('2025-04', 110.0), ('2025-05', 135.0)]"
+84,Artists With Exhibitions in Europe,List artists who have had exhibitions in European countries.,easy,"filtering, distinct","CREATE TABLE exhibitions (
+  artist TEXT,
+  country TEXT,
+  year INTEGER
+);","INSERT INTO exhibitions (artist, country, year) VALUES
+  ('Marta', 'Spain', 2023),
+  ('Luca', 'Italy', 2022),
+  ('Sofia', 'Brazil', 2021),
+  ('Marta', 'France', 2024),
+  ('Jamal', 'Kenya', 2023);","SELECT DISTINCT artist
+FROM exhibitions
+WHERE country IN ('Spain', 'Italy', 'France', 'Germany', 'UK');","[('Marta',), ('Luca',)]"
+85,Monthly Energy Consumption in NYC,Show total energy consumption per month in kilowatt-hours.,medium,"group_by, date_functions, sum","CREATE TABLE energy_usage (
+  usage_id INTEGER PRIMARY KEY,
+  city TEXT,
+  usage_date DATE,
+  kwh INTEGER
+);","INSERT INTO energy_usage (usage_id, city, usage_date, kwh) VALUES
+  (1, 'New York', '2025-01-10', 1500),
+  (2, 'New York', '2025-01-20', 1800),
+  (3, 'New York', '2025-02-15', 2000),
+  (4, 'Los Angeles', '2025-01-25', 1700);","SELECT strftime('%Y-%m', usage_date) AS month, SUM(kwh) AS total_kwh
+FROM energy_usage
+WHERE city = 'New York'
+GROUP BY month;","[('2025-01', 3300), ('2025-02', 2000)]"
+86,Top-Selling Books in Latin America,"Find books sold over 10,000 copies in Latin American countries.",medium,"filtering, comparison","CREATE TABLE book_sales (
+  book_title TEXT,
+  country TEXT,
+  copies_sold INTEGER
+);","INSERT INTO book_sales (book_title, country, copies_sold) VALUES
+  ('El Alma', 'Mexico', 12000),
+  ('Caminos', 'Argentina', 9000),
+  ('Vida', 'Brazil', 15000),
+  ('Futuro', 'Chile', 8000);","SELECT book_title, country
+FROM book_sales
+WHERE copies_sold > 10000;","[('El Alma', 'Mexico'), ('Vida', 'Brazil')]"
+87,Cities with Highest Tourist Visits,List cities with more than 5 million tourist visits last year.,hard,"filtering, comparison","CREATE TABLE tourism (
+  city TEXT,
+  year INTEGER,
+  visits INTEGER
+);","INSERT INTO tourism (city, year, visits) VALUES
+  ('Paris', 2024, 7000000),
+  ('Bangkok', 2024, 6500000),
+  ('Nairobi', 2024, 4000000),
+  ('Tokyo', 2024, 5500000);","SELECT city
+FROM tourism
+WHERE year = 2024 AND visits > 5000000;","[('Paris',), ('Bangkok',), ('Tokyo',)]"
+88,Languages Spoken in Multiple Countries,Find languages spoken in more than 3 countries worldwide.,hard,"group_by, having, count","CREATE TABLE languages (
+  language TEXT,
+  country TEXT
+);","INSERT INTO languages (language, country) VALUES
+  ('English', 'USA'),
+  ('English', 'UK'),
+  ('English', 'Australia'),
+  ('Spanish', 'Spain'),
+  ('Spanish', 'Mexico'),
+  ('Spanish', 'Argentina'),
+  ('Spanish', 'Colombia'),
+  ('French', 'France'),
+  ('French', 'Canada'),
+  ('French', 'Belgium');","SELECT language, COUNT(DISTINCT country) AS country_count
+FROM languages
+GROUP BY language
+HAVING country_count > 3;","[('Spanish', 4)]"
+89,Uncompleted Construction Projects in Middle East,List all construction projects not completed by the end of 2024.,medium,"filtering, date_comparison","CREATE TABLE construction_projects (
+  project_name TEXT,
+  country TEXT,
+  completion_date DATE
+);","INSERT INTO construction_projects (project_name, country, completion_date) VALUES
+  ('Desert Tower', 'UAE', '2025-03-15'),
+  ('Oasis Mall', 'Saudi Arabia', '2024-12-30'),
+  ('Sand Dunes Resort', 'Qatar', '2025-07-01'),
+  ('Palm Villas', 'UAE', '2024-10-15');","SELECT project_name, country
+FROM construction_projects
+WHERE completion_date > '2024-12-31';","[('Desert Tower', 'UAE'), ('Sand Dunes Resort', 'Qatar')]"
+90,Monthly Average Internet Speeds in Scandinavian Countries,Calculate average internet speed (Mbps) by month in Scandinavian countries.,medium,"group_by, avg, date_functions","CREATE TABLE internet_speeds (
+  country TEXT,
+  record_date DATE,
+  speed_mbps INTEGER
+);","INSERT INTO internet_speeds (country, record_date, speed_mbps) VALUES
+  ('Sweden', '2025-03-01', 120),
+  ('Norway', '2025-03-10', 130),
+  ('Denmark', '2025-03-15', 125),
+  ('Sweden', '2025-04-01', 118),
+  ('Norway', '2025-04-12', 135);","SELECT strftime('%Y-%m', record_date) AS month, AVG(speed_mbps) AS avg_speed
+FROM internet_speeds
+WHERE country IN ('Sweden', 'Norway', 'Denmark')
+GROUP BY month;","[('2025-03', 125.0), ('2025-04', 126.5)]"
+91,Street Food Vendors With Highest Daily Sales in Bangkok,"Identify vendors making more than 50,000 THB in daily sales.",medium,"filtering, aggregation, having","CREATE TABLE vendors (
+  vendor_name TEXT,
+  city TEXT,
+  daily_sales INTEGER
+);","INSERT INTO vendors (vendor_name, city, daily_sales) VALUES
+  ('Somchai', 'Bangkok', 55000),
+  ('Niran', 'Bangkok', 40000),
+  ('Mali', 'Chiang Mai', 52000),
+  ('Somchai', 'Bangkok', 48000),
+  ('Niran', 'Bangkok', 51000);","SELECT vendor_name, SUM(daily_sales) AS total_sales
+FROM vendors
+WHERE city = 'Bangkok'
+GROUP BY vendor_name
+HAVING total_sales > 50000;","[('Somchai', 103000), ('Niran', 91000)]"
+92,Countries Exporting Over 1 Million Tons of Cocoa,Find countries with total cocoa exports above 1 million tons.,medium,"group_by, sum, having","CREATE TABLE exports (
+  country TEXT,
+  product TEXT,
+  export_tons INTEGER
+);","INSERT INTO exports (country, product, export_tons) VALUES
+  ('Ivory Coast', 'Cocoa', 700000),
+  ('Ghana', 'Cocoa', 600000),
+  ('Nigeria', 'Cocoa', 300000),
+  ('Ivory Coast', 'Coffee', 200000),
+  ('Ghana', 'Coffee', 150000);","SELECT country, SUM(export_tons) AS total_cocoa_exports
+FROM exports
+WHERE product = 'Cocoa'
+GROUP BY country
+HAVING total_cocoa_exports > 1000000;",[]
+93,Daily Average Temperature in Sydney,Calculate the average temperature for each day recorded in Sydney.,easy,"group_by, avg, filtering","CREATE TABLE weather_data (
+  city TEXT,
+  record_date DATE,
+  temperature_celsius INTEGER
+);","INSERT INTO weather_data (city, record_date, temperature_celsius) VALUES
+  ('Sydney', '2025-06-01', 22),
+  ('Sydney', '2025-06-01', 24),
+  ('Sydney', '2025-06-02', 20),
+  ('Melbourne', '2025-06-01', 15);","SELECT record_date, AVG(temperature_celsius) AS avg_temp
+FROM weather_data
+WHERE city = 'Sydney'
+GROUP BY record_date;","[('2025-06-01', 23.0), ('2025-06-02', 20.0)]"
+94,Top University Applicants by Country,List countries with more than 1000 university applicants.,medium,"group_by, having, count","CREATE TABLE applicants (
+  applicant_id INTEGER PRIMARY KEY,
+  country TEXT
+);","INSERT INTO applicants (applicant_id, country) VALUES
+  (1, 'India'),
+  (2, 'India'),
+  (3, 'China'),
+  (4, 'India'),
+  (5, 'Brazil'),
+  (6, 'China'),
+  (7, 'China'); -- assume many more rows for realism","SELECT country, COUNT(applicant_id) AS total_applicants
+FROM applicants
+GROUP BY country
+HAVING total_applicants > 1000;",[]
+95,Most Frequent Rail Routes in Japan,"Identify rail routes with more than 10,000 daily passengers.",hard,"group_by, having, filtering","CREATE TABLE rail_routes (
+  route_name TEXT,
+  daily_passengers INTEGER
+);","INSERT INTO rail_routes (route_name, daily_passengers) VALUES
+  ('Tokyo-Osaka', 15000),
+  ('Tokyo-Kyoto', 12000),
+  ('Osaka-Kyoto', 9000),
+  ('Sapporo-Hakodate', 7000);","SELECT route_name
+FROM rail_routes
+WHERE daily_passengers > 10000;","[('Tokyo-Osaka',), ('Tokyo-Kyoto',)]"
+96,Solar Power Plants in the Sahara Desert,List solar plants producing over 500 MW in capacity.,medium,"filtering, comparison","CREATE TABLE solar_plants (
+  plant_name TEXT,
+  location TEXT,
+  capacity_mw INTEGER
+);","INSERT INTO solar_plants (plant_name, location, capacity_mw) VALUES
+  ('Sahara Sun', 'Algeria', 600),
+  ('Desert Light', 'Libya', 450),
+  ('SunPower', 'Egypt', 550);","SELECT plant_name, location
+FROM solar_plants
+WHERE capacity_mw > 500;","[('Sahara Sun', 'Algeria'), ('SunPower', 'Egypt')]"
+97,Cities with Rising Air Quality Index (AQI),Find cities where AQI increased compared to last month.,hard,"self_join, date_comparison","CREATE TABLE air_quality (
+  city TEXT,
+  month TEXT,
+  aqi INTEGER
+);","INSERT INTO air_quality (city, month, aqi) VALUES
+  ('Beijing', '2025-05', 150),
+  ('Beijing', '2025-06', 160),
+  ('Delhi', '2025-05', 140),
+  ('Delhi', '2025-06', 135),
+  ('London', '2025-05', 70),
+  ('London', '2025-06', 75);","SELECT current.city
+FROM air_quality current
+JOIN air_quality previous
+ON current.city = previous.city
+AND current.month = '2025-06'
+AND previous.month = '2025-05'
+WHERE current.aqi > previous.aqi;","[('Beijing',), ('London',)]"
+98,Highest Rated Restaurants in Mexico City,List restaurants with rating above 4.5 stars.,easy,"filtering, comparison","CREATE TABLE restaurants (
+  name TEXT,
+  city TEXT,
+  rating REAL
+);","INSERT INTO restaurants (name, city, rating) VALUES
+  ('El Fogon', 'Mexico City', 4.7),
+  ('Casa Azul', 'Mexico City', 4.4),
+  ('La Terraza', 'Mexico City', 4.6),
+  ('Cafe Roma', 'Guadalajara', 4.8);","SELECT name
+FROM restaurants
+WHERE city = 'Mexico City' AND rating > 4.5;","[('El Fogon',), ('La Terraza',)]"
+99,Average Daily Visitors to Museums in Paris,Calculate average daily visitors for each museum.,medium,"group_by, avg","CREATE TABLE museum_visitors (
+  museum_name TEXT,
+  visit_date DATE,
+  visitors INTEGER
+);","INSERT INTO museum_visitors (museum_name, visit_date, visitors) VALUES
+  ('Louvre', '2025-04-01', 15000),
+  ('Louvre', '2025-04-02', 16000),
+  ('Orsay', '2025-04-01', 7000),
+  ('Orsay', '2025-04-02', 7500);","SELECT museum_name, AVG(visitors) AS avg_visitors
+FROM museum_visitors
+GROUP BY museum_name;","[('Louvre', 15500.0), ('Orsay', 7250.0)]"
+100,Weekly Water Consumption in Cape Town,Sum total weekly water consumption in liters for Cape Town households.,medium,"group_by, sum, date_functions","CREATE TABLE water_usage (
+  household_id INTEGER,
+  city TEXT,
+  usage_date DATE,
+  liters INTEGER
+);","INSERT INTO water_usage (household_id, city, usage_date, liters) VALUES
+  (1, 'Cape Town', '2025-06-01', 120),
+  (1, 'Cape Town', '2025-06-02', 130),
+  (2, 'Cape Town', '2025-06-01', 110),
+  (2, 'Cape Town', '2025-06-03', 115),
+  (3, 'Johannesburg', '2025-06-01', 140);","SELECT strftime('%Y-%W', usage_date) AS week, SUM(liters) AS total_liters
+FROM water_usage
+WHERE city = 'Cape Town'
+GROUP BY week;","[('2025-22', 475)]"
+101,Top-Selling Gadgets in Nairobi,List all gadgets priced above $500 sold in Nairobi's biggest electronics store.,easy,"select, filtering","CREATE TABLE gadgets (id INTEGER PRIMARY KEY, name TEXT, price INTEGER, city TEXT);","INSERT INTO gadgets (id, name, price, city) VALUES (1, 'Smartphone X', 700, 'Nairobi'), (2, 'Smartwatch Z', 300, 'Lagos'), (3, 'Tablet A', 550, 'Nairobi'), (4, 'Laptop B', 1200, 'Cairo');","SELECT name, price FROM gadgets WHERE price > 500 AND city = 'Nairobi';","[('Smartphone X', 700), ('Tablet A', 550)]"
+102,Daily Visitors at Tokyo Museum,"Find the number of visitors who came to the Tokyo Museum on July 1, 2025.",easy,"select, filtering, date","CREATE TABLE visitors (id INTEGER PRIMARY KEY, museum TEXT, visit_date DATE, visitor_count INTEGER);","INSERT INTO visitors (id, museum, visit_date, visitor_count) VALUES (1, 'Tokyo Museum', '2025-07-01', 1200), (2, 'London Museum', '2025-07-01', 800), (3, 'Tokyo Museum', '2025-07-02', 900);",SELECT visitor_count FROM visitors WHERE museum = 'Tokyo Museum' AND visit_date = '2025-07-01';,"[(1200,)]"
+103,Average Calories in Brazilian Breakfasts,Calculate the average calorie content of popular breakfast dishes in Rio de Janeiro.,easy,"aggregation, avg, filtering","CREATE TABLE breakfasts (dish TEXT, city TEXT, calories INTEGER);","INSERT INTO breakfasts (dish, city, calories) VALUES ('Pão de Queijo', 'Rio de Janeiro', 250), ('Tapioca', 'Rio de Janeiro', 180), ('Arepa', 'Bogotá', 220);",SELECT AVG(calories) FROM breakfasts WHERE city = 'Rio de Janeiro';,"[(215.0,)]"
+104,Highest Rated Bollywood Movies of 2023,List Bollywood movies released in 2023 with a rating higher than 8.0.,easy,"select, filtering, comparison","CREATE TABLE movies (id INTEGER PRIMARY KEY, title TEXT, release_year INTEGER, rating FLOAT, industry TEXT);","INSERT INTO movies (id, title, release_year, rating, industry) VALUES (1, 'Starry Night', 2023, 8.5, 'Bollywood'), (2, 'Sunrise', 2022, 7.8, 'Bollywood'), (3, 'Moonlight', 2023, 8.2, 'Hollywood');",SELECT title FROM movies WHERE industry = 'Bollywood' AND release_year = 2023 AND rating > 8.0;,"[('Starry Night',)]"
+105,Total Revenue from Coffee Shops in Paris,Find the total revenue generated by coffee shops in Paris in June 2025.,easy,"aggregation, sum, filtering","CREATE TABLE sales (shop_name TEXT, city TEXT, sale_date DATE, amount INTEGER);","INSERT INTO sales (shop_name, city, sale_date, amount) VALUES ('Café de Paris', 'Paris', '2025-06-05', 1200), ('Bistro Belle', 'Paris', '2025-06-15', 800), ('Café de Lyon', 'Lyon', '2025-06-05', 700);",SELECT SUM(amount) FROM sales WHERE city = 'Paris' AND sale_date BETWEEN '2025-06-01' AND '2025-06-30';,"[(2000,)]"
+106,Top 3 Export Countries for Ethiopian Coffee,List the top three countries importing the most Ethiopian coffee by quantity.,medium,"group_by, order_by, limit","CREATE TABLE exports (id INTEGER PRIMARY KEY, product TEXT, country TEXT, quantity INTEGER);","INSERT INTO exports (id, product, country, quantity) VALUES (1, 'Coffee', 'USA', 1500), (2, 'Coffee', 'Germany', 1200), (3, 'Coffee', 'Japan', 1300), (4, 'Coffee', 'France', 900), (5, 'Tea', 'USA', 800);","SELECT country, SUM(quantity) AS total_quantity FROM exports WHERE product = 'Coffee' GROUP BY country ORDER BY total_quantity DESC LIMIT 3;","[('USA', 1500), ('Japan', 1300), ('Germany', 1200)]"
+107,Monthly Flight Bookings for Emirates,Show the total number of bookings for Emirates flights each month in 2025.,medium,"group_by, date_functions, sum","CREATE TABLE bookings (id INTEGER PRIMARY KEY, airline TEXT, booking_date DATE, seats_booked INTEGER);","INSERT INTO bookings (id, airline, booking_date, seats_booked) VALUES (1, 'Emirates', '2025-01-15', 120), (2, 'Emirates', '2025-01-20', 80), (3, 'Emirates', '2025-02-10', 150), (4, 'Qatar Airways', '2025-01-15', 100);","SELECT strftime('%Y-%m', booking_date) AS month, SUM(seats_booked) FROM bookings WHERE airline = 'Emirates' GROUP BY month ORDER BY month;","[('2025-01', 200), ('2025-02', 150)]"
+108,Average Age of Students at University of Cape Town,Calculate the average age of all students enrolled at the University of Cape Town.,medium,"aggregation, avg, filtering","CREATE TABLE students (student_id INTEGER PRIMARY KEY, name TEXT, university TEXT, age INTEGER);","INSERT INTO students (student_id, name, university, age) VALUES (1, 'Thabo', 'University of Cape Town', 22), (2, 'Amina', 'University of Nairobi', 21), (3, 'Sizwe', 'University of Cape Town', 24);",SELECT AVG(age) FROM students WHERE university = 'University of Cape Town';,"[(23.0,)]"
+109,Books Published After 2010 in Seoul,List books published after 2010 in Seoul with their authors.,medium,"select, filtering, date","CREATE TABLE books (book_id INTEGER PRIMARY KEY, title TEXT, author TEXT, publish_year INTEGER, city TEXT);","INSERT INTO books (book_id, title, author, publish_year, city) VALUES (1, 'Modern Korea', 'Lee Ji-hoon', 2012, 'Seoul'), (2, 'Ancient History', 'Kim Min-seo', 2008, 'Seoul'), (3, 'Tech Advances', 'Park Sung', 2015, 'Busan');","SELECT title, author FROM books WHERE city = 'Seoul' AND publish_year > 2010;","[('Modern Korea', 'Lee Ji-hoon')]"
+110,Top 5 Most Frequent Commuters in Berlin,Find the top 5 commuters with the most trips in Berlin’s public transit system.,medium,"group_by, order_by, limit","CREATE TABLE commutes (commuter_id INTEGER, city TEXT, trip_date DATE);","INSERT INTO commutes (commuter_id, city, trip_date) VALUES (1, 'Berlin', '2025-07-01'), (1, 'Berlin', '2025-07-02'), (2, 'Berlin', '2025-07-01'), (3, 'Berlin', '2025-07-01'), (1, 'Berlin', '2025-07-03'), (2, 'Berlin', '2025-07-02'), (4, 'Paris', '2025-07-01');","SELECT commuter_id, COUNT(*) AS trips FROM commutes WHERE city = 'Berlin' GROUP BY commuter_id ORDER BY trips DESC LIMIT 5;","[(1, 3), (2, 2), (3, 1)]"
+111,Students Who Passed Both Science and Math,List students who scored at least 50 in both Science and Math.,medium,"self_join, filtering, aggregation","CREATE TABLE grades (student TEXT, subject TEXT, score INTEGER);","INSERT INTO grades (student, subject, score) VALUES ('Zara', 'Science', 60), ('Zara', 'Math', 55), ('Liam', 'Science', 45), ('Liam', 'Math', 80), ('Nia', 'Science', 75), ('Nia', 'Math', 49);",SELECT DISTINCT g1.student FROM grades g1 JOIN grades g2 ON g1.student = g2.student WHERE g1.subject = 'Science' AND g2.subject = 'Math' AND g1.score >= 50 AND g2.score >= 50;,"[('Zara',)]"
+112,Weekly Active Users in Lagos,Count users who logged in at least once each week in Lagos for June 2025.,hard,"window_function, date_functions, aggregation","CREATE TABLE user_logins (user_id INTEGER, city TEXT, login_date DATE);","INSERT INTO user_logins (user_id, city, login_date) VALUES (1, 'Lagos', '2025-06-01'), (1, 'Lagos', '2025-06-08'), (2, 'Lagos', '2025-06-05'), (3, 'Lagos', '2025-06-15'), (2, 'Lagos', '2025-06-10');","SELECT COUNT(DISTINCT user_id) FROM (SELECT user_id, strftime('%W', login_date) AS week FROM user_logins WHERE city = 'Lagos' AND login_date BETWEEN '2025-06-01' AND '2025-06-30' GROUP BY user_id, week HAVING COUNT(*) > 0);","[(3,)]"
+113,Longest Movie Title in Mexico City,Find the movie with the longest title released in Mexico City cinemas.,medium,"string_functions, order_by, limit","CREATE TABLE cinema_movies (id INTEGER PRIMARY KEY, title TEXT, city TEXT);","INSERT INTO cinema_movies (id, title, city) VALUES (1, 'Sunset Boulevard', 'Mexico City'), (2, 'A Very Long Movie Title', 'Mexico City'), (3, 'Short Film', 'Guadalajara');",SELECT title FROM cinema_movies WHERE city = 'Mexico City' ORDER BY LENGTH(title) DESC LIMIT 1;,"[('A Very Long Movie Title',)]"
+114,Countries with No Imports of Electronics,List countries that have no recorded imports of electronic products.,medium,"left_join, null_filtering","CREATE TABLE countries (country TEXT PRIMARY KEY); CREATE TABLE imports (id INTEGER PRIMARY KEY, country TEXT, product TEXT);","INSERT INTO countries (country) VALUES ('Kenya'), ('Uganda'), ('Tanzania'); INSERT INTO imports (id, country, product) VALUES (1, 'Kenya', 'Furniture'), (2, 'Uganda', 'Electronics');",SELECT c.country FROM countries c LEFT JOIN imports i ON c.country = i.country AND i.product = 'Electronics' WHERE i.product IS NULL;,"[('Kenya'), ('Tanzania')]"
+115,Peak Traffic Hours in Mumbai,Identify the hour of the day with the highest average number of vehicles on Mumbai roads.,hard,"datetime_functions, aggregation, order_by","CREATE TABLE traffic (id INTEGER PRIMARY KEY, city TEXT, timestamp DATETIME, vehicle_count INTEGER);","INSERT INTO traffic (id, city, timestamp, vehicle_count) VALUES (1, 'Mumbai', '2025-07-01 08:00:00', 1200), (2, 'Mumbai', '2025-07-01 09:00:00', 1500), (3, 'Mumbai', '2025-07-01 08:30:00', 1300);","SELECT STRFTIME('%H', timestamp) AS hour, AVG(vehicle_count) AS avg_vehicles FROM traffic WHERE city = 'Mumbai' GROUP BY hour ORDER BY avg_vehicles DESC LIMIT 1;","[('09', 1500.0)]"
+116,Top Rated Restaurants in Istanbul,Find the top 3 restaurants in Istanbul with ratings above 4.5.,medium,"filtering, order_by, limit","CREATE TABLE restaurants (id INTEGER PRIMARY KEY, name TEXT, city TEXT, rating FLOAT);","INSERT INTO restaurants (id, name, city, rating) VALUES (1, 'Sultan’s Delight', 'Istanbul', 4.8), (2, 'Bosphorus Eats', 'Istanbul', 4.6), (3, 'Golden Kebab', 'Istanbul', 4.4), (4, 'Istanbul Grill', 'Ankara', 4.7);",SELECT name FROM restaurants WHERE city = 'Istanbul' AND rating > 4.5 ORDER BY rating DESC LIMIT 3;,"[('Sultan’s Delight',), ('Bosphorus Eats',)]"
+117,Average Stay Duration in Sydney Hotels,Calculate the average number of days guests stay at hotels in Sydney.,medium,"datetime_math, avg","CREATE TABLE hotel_stays (id INTEGER PRIMARY KEY, city TEXT, check_in DATE, check_out DATE);","INSERT INTO hotel_stays (id, city, check_in, check_out) VALUES (1, 'Sydney', '2025-06-01', '2025-06-05'), (2, 'Sydney', '2025-06-10', '2025-06-12'), (3, 'Melbourne', '2025-06-01', '2025-06-04');",SELECT AVG(julianday(check_out) - julianday(check_in)) FROM hotel_stays WHERE city = 'Sydney';,"[(3.0,)]"
+118,Cities with Highest Book Purchases,Identify cities where more than 5000 books were purchased in 2024.,medium,"group_by, having, filtering","CREATE TABLE book_sales (city TEXT, sale_year INTEGER, books_sold INTEGER);","INSERT INTO book_sales (city, sale_year, books_sold) VALUES ('New York', 2024, 6000), ('London', 2024, 4500), ('Paris', 2024, 5200);",SELECT city FROM book_sales WHERE sale_year = 2024 GROUP BY city HAVING SUM(books_sold) > 5000;,"[('New York',), ('Paris',)]"
+119,Employees with Multiple Roles in Toronto,Find employees who have more than one role assigned in Toronto offices.,hard,"group_by, having, filtering","CREATE TABLE employee_roles (employee_id INTEGER, city TEXT, role TEXT);","INSERT INTO employee_roles (employee_id, city, role) VALUES (1, 'Toronto', 'Developer'), (1, 'Toronto', 'Team Lead'), (2, 'Toronto', 'Designer'), (3, 'Vancouver', 'Developer');",SELECT employee_id FROM employee_roles WHERE city = 'Toronto' GROUP BY employee_id HAVING COUNT(DISTINCT role) > 1;,"[(1,)]"
+120,Monthly Charity Donations in Lagos,Calculate total donations made each month in Lagos in 2025.,medium,"group_by, date_functions, sum","CREATE TABLE donations (donor TEXT, city TEXT, donation_date DATE, amount INTEGER);","INSERT INTO donations (donor, city, donation_date, amount) VALUES ('Aisha', 'Lagos', '2025-01-15', 1000), ('Bola', 'Lagos', '2025-01-20', 700), ('Aisha', 'Lagos', '2025-02-10', 1200);","SELECT strftime('%Y-%m', donation_date) AS month, SUM(amount) FROM donations WHERE city = 'Lagos' GROUP BY month ORDER BY month;","[('2025-01', 1700), ('2025-02', 1200)]"
+121,Festival Attendance in Rio,List the total number of attendees per festival held in Rio de Janeiro in 2025.,medium,"group_by, sum, filtering","CREATE TABLE festivals (id INTEGER PRIMARY KEY, name TEXT, city TEXT, year INTEGER, attendees INTEGER);","INSERT INTO festivals (id, name, city, year, attendees) VALUES (1, 'Carnaval', 'Rio de Janeiro', 2025, 2000000), (2, 'Jazz Fest', 'New Orleans', 2025, 150000), (3, 'Carnaval', 'Rio de Janeiro', 2024, 1800000);","SELECT name, SUM(attendees) AS total_attendees FROM festivals WHERE city = 'Rio de Janeiro' AND year = 2025 GROUP BY name;","[('Carnaval', 2000000)]"
+122,Top Exported Spices from Kerala,Find the top 3 spices exported from Kerala by quantity in 2024.,medium,"group_by, order_by, limit","CREATE TABLE spice_exports (id INTEGER PRIMARY KEY, spice TEXT, region TEXT, year INTEGER, quantity INTEGER);","INSERT INTO spice_exports (id, spice, region, year, quantity) VALUES (1, 'Pepper', 'Kerala', 2024, 5000), (2, 'Cardamom', 'Kerala', 2024, 4500), (3, 'Turmeric', 'Kerala', 2024, 3000), (4, 'Saffron', 'Kashmir', 2024, 2000);","SELECT spice, SUM(quantity) AS total_quantity FROM spice_exports WHERE region = 'Kerala' AND year = 2024 GROUP BY spice ORDER BY total_quantity DESC LIMIT 3;","[('Pepper', 5000), ('Cardamom', 4500), ('Turmeric', 3000)]"
+123,Average Study Hours for Tokyo Students,Calculate the average daily study hours of students attending Tokyo High School.,easy,"aggregation, avg, filtering","CREATE TABLE study_logs (student TEXT, school TEXT, date DATE, hours INTEGER);","INSERT INTO study_logs (student, school, date, hours) VALUES ('Keiko', 'Tokyo High School', '2025-05-01', 4), ('Yuto', 'Tokyo High School', '2025-05-01', 5), ('Aki', 'Osaka High School', '2025-05-01', 3);",SELECT AVG(hours) FROM study_logs WHERE school = 'Tokyo High School';,"[(4.5,)]"
+124,Countries Participating in 2025 Tech Expo,List all countries that participated in the 2025 Global Tech Expo.,easy,"select, distinct, filtering","CREATE TABLE expo_participants (id INTEGER PRIMARY KEY, country TEXT, year INTEGER, expo_name TEXT);","INSERT INTO expo_participants (id, country, year, expo_name) VALUES (1, 'USA', 2025, 'Global Tech Expo'), (2, 'Germany', 2025, 'Global Tech Expo'), (3, 'Brazil', 2024, 'Global Tech Expo');",SELECT DISTINCT country FROM expo_participants WHERE year = 2025 AND expo_name = 'Global Tech Expo';,"[('USA',), ('Germany',)]"
+125,Daily Revenue of Artisan Markets in Marrakech,Calculate the total daily revenue generated by artisan markets in Marrakech during July 2025.,medium,"group_by, sum, date_filtering","CREATE TABLE market_sales (market_name TEXT, city TEXT, sale_date DATE, amount INTEGER);","INSERT INTO market_sales (market_name, city, sale_date, amount) VALUES ('Souk Medina', 'Marrakech', '2025-07-01', 12000), ('Souk Medina', 'Marrakech', '2025-07-02', 15000), ('Souk Riad', 'Marrakech', '2025-07-01', 8000);","SELECT sale_date, SUM(amount) FROM market_sales WHERE city = 'Marrakech' AND sale_date BETWEEN '2025-07-01' AND '2025-07-31' GROUP BY sale_date ORDER BY sale_date;","[('2025-07-01', 20000), ('2025-07-02', 15000)]"
+126,Top 5 Trending Songs in Seoul,List the top 5 songs with the highest streams in Seoul in June 2025.,medium,"group_by, order_by, limit","CREATE TABLE song_streams (song TEXT, city TEXT, stream_date DATE, streams INTEGER);","INSERT INTO song_streams (song, city, stream_date, streams) VALUES ('Seoul Nights', 'Seoul', '2025-06-01', 20000), ('K-Pop Star', 'Seoul', '2025-06-02', 25000), ('Summer Love', 'Seoul', '2025-06-03', 18000), ('Dream', 'Busan', '2025-06-01', 15000);","SELECT song, SUM(streams) AS total_streams FROM song_streams WHERE city = 'Seoul' AND stream_date BETWEEN '2025-06-01' AND '2025-06-30' GROUP BY song ORDER BY total_streams DESC LIMIT 5;","[('K-Pop Star', 25000), ('Seoul Nights', 20000), ('Summer Love', 18000)]"
+127,Health Checkups in Nairobi Clinics,Count how many health checkups were done in Nairobi clinics in May 2025.,easy,"count, filtering","CREATE TABLE checkups (id INTEGER PRIMARY KEY, clinic TEXT, city TEXT, checkup_date DATE);","INSERT INTO checkups (id, clinic, city, checkup_date) VALUES (1, 'Green Care', 'Nairobi', '2025-05-10'), (2, 'Health First', 'Nairobi', '2025-05-15'), (3, 'Green Care', 'Nairobi', '2025-04-20');",SELECT COUNT(*) FROM checkups WHERE city = 'Nairobi' AND checkup_date BETWEEN '2025-05-01' AND '2025-05-31';,"[(2,)]"
+128,Average Age of Moviegoers in Cairo,Find the average age of people attending movies in Cairo cinemas in 2024.,medium,"aggregation, avg, filtering","CREATE TABLE movie_attendance (person_id INTEGER, city TEXT, attendance_year INTEGER, age INTEGER);","INSERT INTO movie_attendance (person_id, city, attendance_year, age) VALUES (1, 'Cairo', 2024, 30), (2, 'Cairo', 2024, 25), (3, 'Alexandria', 2024, 40);",SELECT AVG(age) FROM movie_attendance WHERE city = 'Cairo' AND attendance_year = 2024;,"[(27.5,)]"
+129,Employees Working Remotely in Mumbai,List all employees who have a 'remote' work status in Mumbai offices.,easy,"filtering, select","CREATE TABLE employees (employee_id INTEGER PRIMARY KEY, name TEXT, city TEXT, work_status TEXT);","INSERT INTO employees (employee_id, name, city, work_status) VALUES (1, 'Raj', 'Mumbai', 'remote'), (2, 'Anita', 'Mumbai', 'onsite'), (3, 'Deepak', 'Delhi', 'remote');",SELECT name FROM employees WHERE city = 'Mumbai' AND work_status = 'remote';,"[('Raj',)]"
+130,Monthly Rainfall in Singapore,Calculate the total rainfall per month in Singapore for the year 2024.,medium,"group_by, date_functions, sum","CREATE TABLE weather_data (id INTEGER PRIMARY KEY, city TEXT, date DATE, rainfall_mm FLOAT);","INSERT INTO weather_data (id, city, date, rainfall_mm) VALUES (1, 'Singapore', '2024-01-10', 120.5), (2, 'Singapore', '2024-01-20', 100.0), (3, 'Singapore', '2024-02-15', 80.3), (4, 'Kuala Lumpur', '2024-01-10', 90.1);","SELECT strftime('%Y-%m', date) AS month, SUM(rainfall_mm) FROM weather_data WHERE city = 'Singapore' AND date BETWEEN '2024-01-01' AND '2024-12-31' GROUP BY month ORDER BY month;","[('2024-01', 220.5), ('2024-02', 80.3)]"
+131,Books Borrowed by University of Lagos Students,Find the total number of books borrowed by students from the University of Lagos in 2025.,medium,"aggregation, filtering, sum","CREATE TABLE library_borrowings (student_name TEXT, university TEXT, borrow_year INTEGER, book_count INTEGER);","INSERT INTO library_borrowings (student_name, university, borrow_year, book_count) VALUES ('Femi', 'University of Lagos', 2025, 3), ('Ngozi', 'University of Lagos', 2025, 5), ('John', 'University of Ibadan', 2025, 2);",SELECT SUM(book_count) FROM library_borrowings WHERE university = 'University of Lagos' AND borrow_year = 2025;,"[(8,)]"
+132,Cities With Most Renewable Energy Projects,List the top 3 cities with the highest number of renewable energy projects in 2024.,medium,"group_by, order_by, limit","CREATE TABLE energy_projects (project_id INTEGER PRIMARY KEY, city TEXT, project_type TEXT, year INTEGER);","INSERT INTO energy_projects (project_id, city, project_type, year) VALUES (1, 'Berlin', 'Solar', 2024), (2, 'Berlin', 'Wind', 2024), (3, 'Copenhagen', 'Wind', 2024), (4, 'Oslo', 'Hydro', 2024), (5, 'Copenhagen', 'Solar', 2024), (6, 'Berlin', 'Solar', 2024);","SELECT city, COUNT(*) AS project_count FROM energy_projects WHERE year = 2024 GROUP BY city ORDER BY project_count DESC LIMIT 3;","[('Berlin', 3), ('Copenhagen', 2), ('Oslo', 1)]"
+133,Users with Consecutive Login Streaks in Dubai,Identify users who logged in for at least 3 consecutive days in Dubai during July 2025.,hard,"window_function, date_math, streaks, cte","CREATE TABLE user_logins (user_id INTEGER, city TEXT, login_date DATE);","INSERT INTO user_logins (user_id, city, login_date) VALUES (1, 'Dubai', '2025-07-01'), (1, 'Dubai', '2025-07-02'), (1, 'Dubai', '2025-07-03'), (2, 'Dubai', '2025-07-01'), (2, 'Dubai', '2025-07-03');","WITH streaks AS ( SELECT user_id, login_date, DATE(login_date, '-' || ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY login_date) || ' days') AS grp FROM user_logins WHERE city = 'Dubai' AND login_date BETWEEN '2025-07-01' AND '2025-07-31' ) SELECT user_id FROM streaks GROUP BY user_id, grp HAVING COUNT(*) >= 3;","[(1,)]"
+134,Most Popular Cuisine Types in Bangkok,Rank cuisine types in Bangkok by number of restaurants offering them in 2025.,medium,"group_by, order_by","CREATE TABLE restaurants (id INTEGER PRIMARY KEY, name TEXT, city TEXT, cuisine TEXT, year INTEGER);","INSERT INTO restaurants (id, name, city, cuisine, year) VALUES (1, 'Spice House', 'Bangkok', 'Thai', 2025), (2, 'Seafood Delight', 'Bangkok', 'Seafood', 2025), (3, 'Curry Corner', 'Bangkok', 'Indian', 2025), (4, 'Noodle Shop', 'Bangkok', 'Thai', 2025), (5, 'Sushi World', 'Tokyo', 'Japanese', 2025);","SELECT cuisine, COUNT(*) AS restaurant_count FROM restaurants WHERE city = 'Bangkok' AND year = 2025 GROUP BY cuisine ORDER BY restaurant_count DESC;","[('Thai', 2), ('Seafood', 1), ('Indian', 1)]"
+135,Average Delivery Time for E-commerce in Lagos,Calculate the average delivery time in days for e-commerce orders delivered in Lagos.,medium,"datetime_math, avg","CREATE TABLE deliveries (order_id INTEGER PRIMARY KEY, city TEXT, order_date DATE, delivery_date DATE);","INSERT INTO deliveries (order_id, city, order_date, delivery_date) VALUES (1, 'Lagos', '2025-06-01', '2025-06-05'), (2, 'Lagos', '2025-06-03', '2025-06-07'), (3, 'Abuja', '2025-06-01', '2025-06-04');",SELECT AVG(julianday(delivery_date) - julianday(order_date)) FROM deliveries WHERE city = 'Lagos';,"[(4.0,)]"
+136,Employees Joining Tech Startups in Berlin,Count employees who joined tech startups in Berlin in the last 6 months.,medium,"date_filtering, count","CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, city TEXT, company_type TEXT, join_date DATE);","INSERT INTO employees (id, name, city, company_type, join_date) VALUES (1, 'Anna', 'Berlin', 'Tech Startup', '2025-02-01'), (2, 'Mark', 'Berlin', 'Tech Startup', '2024-12-01'), (3, 'Lena', 'Berlin', 'Corporate', '2025-04-01');","SELECT COUNT(*) FROM employees WHERE city = 'Berlin' AND company_type = 'Tech Startup' AND join_date >= DATE('now', '-6 months');","[(1,)]"
+137,Average Age of Marathon Finishers in Boston,Calculate the average age of runners who finished the Boston Marathon in 2024.,medium,"aggregation, filtering, avg","CREATE TABLE marathon_finishers (runner_id INTEGER PRIMARY KEY, race_year INTEGER, city TEXT, age INTEGER);","INSERT INTO marathon_finishers (runner_id, race_year, city, age) VALUES (1, 2024, 'Boston', 32), (2, 2024, 'Boston', 28), (3, 2024, 'Chicago', 30);",SELECT AVG(age) FROM marathon_finishers WHERE city = 'Boston' AND race_year = 2024;,"[(30.0,)]"
+138,Popular Hiking Trails in Swiss Alps,"List hiking trails in the Swiss Alps with more than 10,000 visitors in 2025.",medium,"filtering, count","CREATE TABLE hiking_trails (trail_id INTEGER PRIMARY KEY, region TEXT, visitors INTEGER, year INTEGER);","INSERT INTO hiking_trails (trail_id, region, visitors, year) VALUES (1, 'Swiss Alps', 12000, 2025), (2, 'Swiss Alps', 9000, 2025), (3, 'Rockies', 15000, 2025);",SELECT trail_id FROM hiking_trails WHERE region = 'Swiss Alps' AND visitors > 10000 AND year = 2025;,"[(1,)]"
+139,Monthly Electricity Consumption in Cairo,Calculate total electricity consumption per month in Cairo for 2024.,medium,"group_by, date_functions, sum","CREATE TABLE electricity_usage (id INTEGER PRIMARY KEY, city TEXT, usage_date DATE, consumption_kwh FLOAT);","INSERT INTO electricity_usage (id, city, usage_date, consumption_kwh) VALUES (1, 'Cairo', '2024-01-10', 1500.5), (2, 'Cairo', '2024-01-20', 1700.0), (3, 'Cairo', '2024-02-15', 1600.3);","SELECT strftime('%Y-%m', usage_date) AS month, SUM(consumption_kwh) FROM electricity_usage WHERE city = 'Cairo' AND usage_date BETWEEN '2024-01-01' AND '2024-12-31' GROUP BY month ORDER BY month;","[('2024-01', 3200.5), ('2024-02', 1600.3)]"
+140,Frequent Buyers in Johannesburg,Identify customers who made more than 5 purchases in Johannesburg in the first half of 2025.,hard,"group_by, having, filtering","CREATE TABLE purchases (purchase_id INTEGER PRIMARY KEY, customer_name TEXT, city TEXT, purchase_date DATE);","INSERT INTO purchases (purchase_id, customer_name, city, purchase_date) VALUES (1, 'Sipho', 'Johannesburg', '2025-01-05'), (2, 'Sipho', 'Johannesburg', '2025-02-10'), (3, 'Sipho', 'Johannesburg', '2025-03-15'), (4, 'Sipho', 'Johannesburg', '2025-04-20'), (5, 'Sipho', 'Johannesburg', '2025-05-25'), (6, 'Sipho', 'Johannesburg', '2025-06-30'), (7, 'Thandi', 'Johannesburg', '2025-02-14');",SELECT customer_name FROM purchases WHERE city = 'Johannesburg' AND purchase_date BETWEEN '2025-01-01' AND '2025-06-30' GROUP BY customer_name HAVING COUNT(*) > 5;,"[('Sipho',)]"

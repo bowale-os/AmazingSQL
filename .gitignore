@@ -1,0 +1,14 @@
+.env
+.env.*
+client_secret.json
+__pycache__/
+*.pyc
+instance/
+*.sqlite3
+venv/
+migrations
+some_db_work
+drop_tmp_table
+chat_generated_sql_questions
+firebasecredentials.json
+seedfirestorewithquestions

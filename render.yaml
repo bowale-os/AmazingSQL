@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: amazing-sql-app
+    env: python
+    buildCommand: |
+      python3 -m pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
+
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: DATABASE_URL
+        value: postgresql://postgres:R3@ct10N@localhost:5432/amazingsql
+    autoDeploy: true
