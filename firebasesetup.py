@@ -1,16 +1,23 @@
 import os
 import json
-import tempfile
-import pyrebase
 import firebase_admin
 from dotenv import load_dotenv
+import pyrebase
+
+from firebase_admin import credentials, firestore, storage, initialize_app
+
 load_dotenv()
 
-from firebase_admin import credentials, auth, firestore, storage, initialize_app
+# Load service account JSON string from environment variable
+service_account_json = os.getenv('FIREBASE_SERVICE_ACCOUNT_JSON')
+if not service_account_json:
+    raise ValueError("FIREBASE_SERVICE_ACCOUNT_JSON env var is missing!")
+
+service_account_info = json.loads(service_account_json)
 
 # Initialize Firebase Admin app only once
 if not firebase_admin._apps:
-    cred = credentials.Certificate('firebasecredentials.json')
+    cred = credentials.Certificate(service_account_info)
     firebase_admin_app = initialize_app(cred, {
         'storageBucket': os.getenv('FIREBASE_STORAGE_BUCKET')
     })
