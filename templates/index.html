@@ -15,8 +15,9 @@
     body {
       margin: 0;
       font-family: 'Sora', sans-serif;
-      background-color: #0a0f1a;
+      background: linear-gradient(135deg, #0a0f1a 0%, #12233a 100%);
       color: #e0e6f1;
+      min-height: 100vh;
     }
 
     .navbar {
@@ -29,6 +30,7 @@
       font-weight: 700;
       font-size: 1.6rem;
       color: #00f0ff;
+      user-select: none;
     }
 
     .hero {
@@ -39,40 +41,32 @@
       align-items: center;
       text-align: center;
       padding: 60px 20px 40px 20px;
-      background: radial-gradient(circle at top left, #1e3a8a, #0a0f1a 70%);
       position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before,
-    .hero::after {
-      content: '';
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, #00f0ff33, transparent 70%);
-      filter: blur(100px);
-      z-index: 0;
-    }
-
-    .hero::before {
-      top: -150px;
-      left: -200px;
-    }
-
-    .hero::after {
-      bottom: -100px;
-      right: -150px;
+      overflow: visible;
+      background: transparent;
+      z-index: 1;
     }
 
     .hero h1 {
       font-size: 3.5rem;
       font-weight: 700;
       margin-bottom: 12px;
-      z-index: 1;
-      background: linear-gradient(to right, #00f0ff, #ff8f00);
+      background: linear-gradient(to right, #00f0ff, #27ae60);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      user-select: none;
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+    }
+
+    .hero p.subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      max-width: 640px;
+      margin: 0 auto 36px auto;
+      color: #8ac6f7;
+      font-style: italic;
+      user-select: none;
+      text-shadow: 0 0 5px rgba(138, 198, 247, 0.5);
     }
 
     .hero p {
@@ -80,24 +74,16 @@
       max-width: 700px;
       margin-bottom: 20px;
       color: #cbd5e1;
-      z-index: 1;
-    }
-
-    .hero .subtitle {
-      font-size: 1.1rem;
-      font-weight: 500;
-      max-width: 640px;
-      margin: 0 auto 36px auto;
-      color: #8ac6f7;
-      z-index: 1;
-      font-style: italic;
+      user-select: none;
+      text-shadow: 0 0 4px rgba(203, 213, 225, 0.3);
     }
 
     .cta-buttons {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
-      z-index: 1;
+      z-index: 2;
+      user-select: none;
     }
 
     .btn-primary,
@@ -108,38 +94,58 @@
       border-radius: 999px;
       transition: all 0.3s ease;
       text-decoration: none;
-      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.15);
+      box-shadow: 0 6px 20px rgba(39, 174, 96, 0.25);
+      user-select: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 120px;
     }
 
     .btn-primary {
-      background: linear-gradient(90deg, #00f0ff, #00c4ff);
-      color: #0a0f1a;
+      background: linear-gradient(90deg, #27ae60, #1e8449);
+      color: white;
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.6);
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: linear-gradient(90deg, #1e8449, #27ae60);
+      box-shadow: 0 6px 18px rgba(39, 174, 96, 0.8);
       transform: scale(1.05);
-      box-shadow: 0 0 20px #00f0ffaa;
+      outline: none;
     }
 
     .btn-secondary {
-      background-color: #1e293b;
-      color: #e2e8f0;
+      background-color: #2980b9;
+      color: white;
+      box-shadow: 0 4px 12px rgba(41, 128, 185, 0.6);
     }
 
-    .btn-secondary:hover {
-      background-color: #334155;
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+      background-color: #1b3a57;
+      box-shadow: 0 6px 18px rgba(27, 58, 87, 0.8);
       transform: scale(1.05);
-      box-shadow: 0 0 12px #64748b;
+      outline: none;
     }
 
     /* Scroll down arrow */
     .scroll-down {
       margin-top: 20px;
-      color: #00f0ff;
+      color: #27ae60;
       cursor: pointer;
       animation: bounce 2.5s infinite;
       z-index: 2;
       font-size: 2rem;
+      user-select: none;
+      filter: drop-shadow(0 0 3px #27ae60);
+      transition: color 0.3s ease;
+    }
+
+    .scroll-down:hover {
+      color: #1e8449;
     }
 
     @keyframes bounce {
@@ -155,36 +161,41 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 30px;
-      padding: 100px 40px;
-      max-width: 1200px;
+      padding: 80px 40px 100px 40px;
+      max-width: 1100px;
       margin: auto;
+      background: rgba(30, 40, 60, 0.7);
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(39, 174, 96, 0.2);
+      user-select: none;
     }
 
     .feature {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(14px);
       border-radius: 18px;
       padding: 30px;
-      box-shadow: 0 0 24px rgba(0, 255, 255, 0.08);
+      box-shadow: 0 0 24px rgba(39, 174, 96, 0.1);
       transition: all 0.4s ease;
     }
 
     .feature:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 48px rgba(0, 255, 255, 0.15);
+      box-shadow: 0 12px 48px rgba(39, 174, 96, 0.25);
     }
 
     .feature h3 {
-      color: #00f0ff;
-      font-size: 1.25rem;
+      color: #27ae60;
+      font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .feature p {
       font-size: 1rem;
       color: #cbd5e1;
+      line-height: 1.4;
     }
 
     footer {
@@ -194,18 +205,29 @@
       color: #94a3b8;
       border-top: 1px solid #1e293b;
       background-color: #0a0f1a;
+      user-select: none;
     }
 
     footer a {
-      color: #00f0ff;
+      color: #27ae60;
       text-decoration: none;
       margin: 0 8px;
       transition: color 0.3s ease;
     }
 
     footer a:hover {
-      color: #3b82f6;
+      color: #1e8449;
       text-decoration: underline;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .features {
+        padding: 50px 20px 60px 20px;
+      }
     }
   </style>
 </head>
@@ -236,11 +258,11 @@
   <section id="features" class="features">
     <div class="feature">
       <h3>⚡ Instant Feedback</h3>
-      <p>Submit queries and get graded instantly. </p>
+      <p>Submit queries and get graded instantly.</p>
     </div>
     <div class="feature">
       <h3>🧠 Real SQL Problems</h3>
-      <p>Practice with challenges inspired by everyday challenges. </p>
+      <p>Practice with challenges inspired by everyday challenges.</p>
     </div>
     <div class="feature">
       <h3>📊 Progress Tracking</h3>
@@ -252,7 +274,7 @@
   <footer>
     <p>&copy; 2025 Daniel Sobowale. All rights reserved.</p>
     <a href="mailto:danielsobowale67@gmail.com">Contact</a> •
-    <a href="https://www.github.com/bowale-os" target="_blank">GitHub</a>
+    <a href="https://www.github.com/bowale-os" target="_blank" rel="noopener noreferrer">GitHub</a>
   </footer>
 
 </body>
