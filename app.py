@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from forms import SignUpForm, LogInForm
 from feedbackdisplay import format_schema, generate_table_headers, compare_user_query, humanize_query_error
 from helpers import validate_sql_input, execute_sql, log_user_attempt, update_streak_and_xp_if_passed, get_solved_question_ids, update_last_attempted, get_all_questions, upload_profile_pic
-from firebasesetup import auth, firebase_admin, bucket, firestore
+from firebasesetup import firebase_admin, bucket, firestore , admin_auth, pyre_auth, bucket, firestore
+
 import os
 db_firestore = firestore.client()
 load_dotenv()
@@ -59,7 +60,7 @@ def signup():
 
         # 2. Create user in Firebase Auth
         try:
-            user_record = firebase_admin.auth.create_user(
+            user_record = firebase_admin.admin_auth.create_user(
                 email=email,
                 password=password,
                 display_name=f"{first_name} {last_name}"
@@ -108,7 +109,7 @@ def login():
         existing = users_ref.where("email", "==", email).limit(1).get()
         if existing:
             try:
-                login_user = auth.sign_in_with_email_and_password(email, password)
+                login_user = pyre_auth.sign_in_with_email_and_password(email, password)
             except:
                 flash("Invalid email or password, try again.", 'error')
                 return render_template('login.html', form=form)
