@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from datetime import date, datetime, timezone, timedelta
 from dotenv import load_dotenv
-from forms import SignUpForm, LogInForm
+from forms import SignUpForm, LogInForm, FeedbackForm
 from feedbackdisplay import format_schema, generate_table_headers, compare_user_query, humanize_query_error
 from helpers import validate_sql_input, execute_sql, log_user_attempt, update_streak_and_xp_if_passed, get_solved_question_ids, update_last_attempted, get_all_questions, upload_profile_pic
 from firebasesetup import firebase_admin, bucket, firestore , admin_auth, pyre_auth
@@ -37,6 +37,31 @@ def get_question_data_with_id(id, include_question_data=False):
 def home():
     session.clear()
     return render_template("index.html")
+
+@app.route('/feedback', methods=["GET", "POST"])
+def feedback():
+    uid = session.get('uid')
+    if not uid:
+        return redirect(url_for('login'))
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        like = form.like.data.strip()
+        dislike = form.dislike.data.strip()
+        hate = form.hate.data.strip()
+
+        user_feedback = {
+            'like':like,
+            'dislike': dislike,
+            'hate' : hate
+        }
+
+        feedback_ref = db_firestore.collection("feedback")
+        feedback_ref.document(uid).set(user_feedback)
+        flash("Thank you for your feedback!")
+        return redirect(url_for('dashboard'))
+
+    return render_template('feedback.html', form=form)
+
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
