@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feedback - AmazingSQL</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121620;
+      color: #e0e6f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .feedback-container {
+      background: #1f2937;
+      padding: 2.5rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(26, 61, 124, 0.7);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #60a5fa;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display: block;
+      color: #cbd5e1;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      background-color: #1e293b;
+      color: #e0e6f1;
+      font-family: monospace;
+      resize: vertical;
+      margin-top: 4px;
+    }
+
+    textarea:focus {
+      border-color: #60a5fa;
+      background-color: #334155;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.6);
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .flash-message {
+      margin-bottom: 1rem;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #4ade80;
+      color: #1e3a8a;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .error {
+        color: #f87171;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        display: block;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="feedback-container">
+    <h1>Leave Feedback</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('feedback') }}">
+      {{ form.csrf_token }}
+
+      <label for="like">What did you enjoy?</label>
+      {{ form.like(id="like") }}
+      {% for error in form.like.errors %}
+        <span class="error">{{ error }}</span>
+      {% endfor %}
+
+      <label for="dislike">What did you dislike?</label>
+      {{ form.dislike(id="dislike") }}
+      {% for error in form.dislike.errors %}
+        <span class="error">{{ error }}</span>
+      {% endfor %}
+
+      <label for="hate">What confused or frustrated you?</label>
+      {{ form.hate(id="hate") }}
+      {% for error in form.hate.errors %}
+        <span class="error">{{ error }}</span>
+      {% endfor %}
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
+
+</body>
+</html>
