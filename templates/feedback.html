@@ -103,7 +103,10 @@
     {% with feedback_messages = get_flashed_messages(category_filter=["feedback"], with_categories=true) %}
       {% if feedback_messages %}
         {% for category, message in feedback_messages %}
-          <div class="flash-message">{{ message }}</div>
+          <div class="alert alert-{{ 'success' if category == 'feedback' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
         {% endfor %}
       {% endif %}
     {% endwith %}
