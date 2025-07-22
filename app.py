@@ -5,7 +5,6 @@ from forms import SignUpForm, LogInForm
 from feedbackdisplay import format_schema, generate_table_headers, compare_user_query, humanize_query_error
 from helpers import validate_sql_input, execute_sql, log_user_attempt, update_streak_and_xp_if_passed, get_solved_question_ids, update_last_attempted, get_all_questions, upload_profile_pic
 from firebasesetup import auth, firebase_admin, bucket, firestore
-import firebase_admin
 import os
 db_firestore = firestore.client()
 load_dotenv()
