@@ -57,7 +57,7 @@ def feedback():
 
         feedback_ref = db_firestore.collection("feedback")
         feedback_ref.document(uid).set(user_feedback)
-        flash("Thank you for your feedback!")
+        flash("Thank you for your feedback!", "feedback")
         return redirect(url_for('dashboard'))
 
     return render_template('feedback.html', form=form)
