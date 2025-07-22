@@ -100,9 +100,9 @@
   <div class="feedback-container">
     <h1>Leave Feedback</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
+    {% with feedback_messages = get_flashed_messages(category_filter=["feedback"], with_categories=true) %}
+      {% if feedback_messages %}
+        {% for category, message in feedback_messages %}
           <div class="flash-message">{{ message }}</div>
         {% endfor %}
       {% endif %}
