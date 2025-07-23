@@ -3,12 +3,12 @@ import sqlite3
 
 def log_user_attempt(db, user, question_data, passed):
     # Log attempt to Firestore, pass or fail
-    user_id = user.get("uid")  # 🔐 safely grab it
+    user_id = user.get("id")  # 🔐 safely grab it
     if not user_id:
         raise ValueError("User object does not have an 'id' key")
     
     attempt_data = {
-        "user_id": user['uid'],
+        "user_id": user['id'],
         "question_id": question_data['id'],
         "difficulty": question_data['difficulty'],
         "passed": passed,
@@ -44,11 +44,11 @@ def validate_sql_input(user_query):
 def update_streak_and_xp_if_passed(db, user, xp_gain):
     print("UPDATE! UPDATE! Called update_streak_and_xp_if_passed")
     try:
-        user_ref = db.collection('users').document(user['uid'])
+        user_ref = db.collection('users').document(user['id'])
         user_doc = user_ref.get()
 
         if not user_doc.exists:
-            print(f"User {user['uid']} not found in Firestore.")
+            print(f"User {user['id']} not found in Firestore.")
             return
         
         user_data = user_doc.to_dict()
