@@ -185,12 +185,63 @@
     .generated-result-label {
       font-weight: 600;
       margin-bottom: 0.5rem;
+
+
+      .flash-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  animation: slideFade 3s ease-out forwards;
+  opacity: 0.95;
+}
+
+/* XP-specific styling */
+.flash-xp {
+  background: linear-gradient(135deg, #5fdd5f, #28a745);
+  color: white;
+  font-size: 1.1rem;
+  border: 2px solid #caffca;
+}
+
+/* Optional animation */
+@keyframes slideFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
     }
 
   </style>
   {% from 'macros/profile_pic.html' import profile_pic %}
 </head>
 <body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
                     <!-- Nav bar -->
   <nav class="navbar navbar-light" style="background-color: #2c3e50;">
     <div class="container-fluid">
