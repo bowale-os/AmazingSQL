@@ -187,44 +187,52 @@
       margin-bottom: 0.5rem;
 
 
-      .flash-message {
+   #flash-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  bottom: 30px;
+  right: 30px;
   z-index: 9999;
-  animation: slideFade 3s ease-out forwards;
-  opacity: 0.95;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* XP-specific styling */
-.flash-xp {
-  background: linear-gradient(135deg, #5fdd5f, #28a745);
+.flash-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 200px;
+  padding: 12px 16px;
+  border-radius: 8px;
   color: white;
-  font-size: 1.1rem;
-  border: 2px solid #caffca;
+  font-weight: 600;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.5s ease-out;
 }
 
-/* Optional animation */
-@keyframes slideFade {
-  0% {
+.flash-xp {
+  background-color: #28a745;
+  border-left: 6px solid #1e7e34;
+}
+
+.flash-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
     opacity: 0;
-    transform: translateY(-40px);
+    transform: translateY(20px);
   }
-  10% {
+  to {
     opacity: 1;
-    transform: translateY(0px);
-  }
-  85% {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(0);
   }
 }
 
@@ -234,13 +242,7 @@
   {% from 'macros/profile_pic.html' import profile_pic %}
 </head>
 <body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="flash-message flash-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+  
 
                     <!-- Nav bar -->
   <nav class="navbar navbar-light" style="background-color: #2c3e50;">
@@ -254,6 +256,20 @@
       </div>
     </div>
   </nav>
+  
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+          <span>{{ message }}</span>
+          <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
                       <!-- Left: Question Panel -->
   <div class="container-fluid">
     
