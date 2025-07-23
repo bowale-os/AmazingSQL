@@ -44,11 +44,11 @@ def validate_sql_input(user_query):
 def update_streak_and_xp_if_passed(db, user, xp_gain):
     print("UPDATE! UPDATE! Called update_streak_and_xp_if_passed")
     try:
-        user_ref = db.collection('users').document(user['id'])
+        user_ref = db.collection('users').document(user['uid'])
         user_doc = user_ref.get()
 
         if not user_doc.exists:
-            print(f"User {user['id']} not found in Firestore.")
+            print(f"User {user['uid']} not found in Firestore.")
             return
         
         user_data = user_doc.to_dict()
