@@ -42,6 +42,7 @@ def validate_sql_input(user_query):
     return True, None
 
 def update_streak_and_xp_if_passed(db, user, xp_gain):
+    now = datetime.now(timezone.utc)
     print("UPDATE! UPDATE! Called update_streak_and_xp_if_passed")
     try:
         user_ref = db.collection('users').document(user['id'])
@@ -87,7 +88,12 @@ def update_streak_and_xp_if_passed(db, user, xp_gain):
             diff = (today - last_correct).days
             print(f"Days since last correct: {diff}")
             if diff == 0:
-                print("Already solved today — no update needed")
+                print("Already solved today — no update and xp addition needed")
+                user_ref.update({
+                    'xp': new_xp,
+                    'last_correct_date': now,
+                    'last_attempted_at': datetime.now(timezone.utc)
+    }                )
                 return
             elif diff == 1:
                 new_streak = current_streak + 1
@@ -97,7 +103,7 @@ def update_streak_and_xp_if_passed(db, user, xp_gain):
                 print("Streak broken, resetting streak to 1")
 
         # Commit updates
-        now = datetime.now(timezone.utc)
+        
         print(f"Updating Firestore with xp={new_xp}, streak={new_streak}, last_correct_date={now.date()}, last_attempted_at={now}")
         user_ref.update({
             'xp': new_xp,
