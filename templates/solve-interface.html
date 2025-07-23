@@ -186,134 +186,7 @@
       font-weight: 600;
       margin-bottom: 0.5rem;
 
-
-   #flash-container {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Ensure right-panel is positioned for absolute children */
-.right-panel {
-  position: relative;
-}
-
-/* Toast container floats inside right-panel top-right */
-#toast-container {
-  position: absolute;   /* absolute inside .right-panel */
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  z-index: 9999;
-  pointer-events: none; /* so clicks pass through except on toast */
-  max-width: 320px;
-}
-
-/* Individual toast style */
-.toast {
-  pointer-events: auto;  /* allow interaction inside toast */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(135deg, #1abc9c, #16a085);
-  color: white;
-  padding: 14px 22px;
-  border-radius: 12px;
-  min-width: 240px;
-  box-shadow:
-    0 8px 15px rgba(26, 188, 156, 0.5),
-    0 0 12px 3px rgba(26, 188, 156, 0.6);
-  font-weight: 700;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.05rem;
-  user-select: none;
-  cursor: default;
-  position: relative;
-  overflow: hidden;
-
-  animation: slideInGlow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
-             fadeOut 0.5s ease forwards;
-  animation-delay: 0s, 4.5s;
-  animation-fill-mode: forwards;
-}
-
-/* Close button */
-.toast-close {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: white;
-  cursor: pointer;
-  margin-left: 12px;
-  line-height: 1;
-}
-
-/* Icon inside toast (optional) */
-.toast-icon {
-  width: 22px;
-  height: 22px;
-  margin-right: 12px;
-  stroke: white;
-  stroke-width: 2;
-  flex-shrink: 0;
-}
-
-/* Animations */
-@keyframes slideInGlow {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-    filter: drop-shadow(0 0 0 transparent);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-    filter: drop-shadow(0 0 10px #1abc9c);
-  }
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateX(50px);
-    height: 0;
-    margin: 0;
-    padding: 0;
-  }
-}
-
-
-
-
   </style>
-
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.toast').forEach(toast => {
-      const closeBtn = toast.querySelector('.toast-close');
-
-      // Auto dismiss after 4.5s
-      const dismiss = () => {
-        toast.style.animation = 'fadeOut 0.5s ease forwards';
-        setTimeout(() => toast.remove(), 500);
-      };
-      setTimeout(dismiss, 5000);
-
-      // Manual dismiss
-      if (closeBtn) {
-        closeBtn.addEventListener('click', dismiss);
-      }
-    });
-  });
-</script>
-
-
   {% from 'macros/profile_pic.html' import profile_pic %}
 </head>
 <body>
@@ -387,21 +260,17 @@
     <div class="right-panel">
       {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div id="toast-container">
+      <div class="mt-3">
         {% for category, message in messages %}
-          <div class="toast toast-{{ category }}">
-            <div class="toast-content">
-              <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
-              </svg>
-              <span>{{ message }}</span>
-            </div>
-            <button class="toast-close" aria-label="Close">×</button>
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       </div>
     {% endif %}
   {% endwith %}
+   
       <form action="{{url_for('run_sql', id=question.id)}}" method="post", novalidate>
       <div class="card shadow-sm sql-card">
         <div class="card-header sql-header">Your SQL</div>
