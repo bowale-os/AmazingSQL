@@ -131,7 +131,7 @@ def update_last_attempted(db, user_id):
         return f"Ran into this error: {e}"
 
 def upload_profile_pic(user_id, profile_pic_file, bucket):
-    if not profile_pic:
+    if not profile_pic_file:
         return None
     blob = bucket.blob(f"profile_pics/{user_id}.jpg")
     blob.upload_from_string(
