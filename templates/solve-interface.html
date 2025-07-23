@@ -294,18 +294,25 @@
   </style>
 
   <script>
-  document.querySelectorAll('.toast').forEach(toast => {
-    setTimeout(() => {
-      toast.style.animation = 'fadeOut 0.5s ease forwards';
-      setTimeout(() => toast.remove(), 500);
-    }, 4500);
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.toast').forEach(toast => {
+      const closeBtn = toast.querySelector('.toast-close');
 
-    toast.querySelector('.toast-close').addEventListener('click', () => {
-      toast.style.animation = 'fadeOut 0.5s ease forwards';
-      setTimeout(() => toast.remove(), 500);
+      // Auto dismiss after 4.5s
+      const dismiss = () => {
+        toast.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => toast.remove(), 500);
+      };
+      setTimeout(dismiss, 5000);
+
+      // Manual dismiss
+      if (closeBtn) {
+        closeBtn.addEventListener('click', dismiss);
+      }
     });
   });
 </script>
+
 
   {% from 'macros/profile_pic.html' import profile_pic %}
 </head>
