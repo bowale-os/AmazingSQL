@@ -284,7 +284,7 @@ def run_sql(id):
 
         if correct_past_attempt and passed:
             log_user_attempt(db_firestore ,user, question_data, passed)
-            update_last_attempted(db_firestore, user['id'])
+            update_last_attempted(db_firestore, user['uid'])
             #Don't award XP or update streak again
             return render_template('solve-interface.html',
                                 question=question_data,
@@ -302,12 +302,12 @@ def run_sql(id):
             update_streak_and_xp_if_passed(db_firestore, user, xp_gain)
             log_user_attempt(db_firestore ,user, question_data, passed)
             # Step 2: Re-fetch updated user data from Firestore
-            user_ref = db_firestore.collection('users').document(user['id'])
+            user_ref = db_firestore.collection('users').document(user['uid'])
             updated_user_doc = user_ref.get()
 
             if updated_user_doc.exists:
                 updated_user = updated_user_doc.to_dict()
-                updated_user['id'] = session['uid']
+                updated_user['uid'] = session['uid']
                 # Step 3: Update session or local user variable with fresh data
                 session['user'] = updated_user
 
@@ -326,7 +326,7 @@ def run_sql(id):
     
     except Exception as e:
         log_user_attempt(db_firestore ,user, question_data, passed=False)
-        update_last_attempted(db_firestore, user['id'])
+        update_last_attempted(db_firestore, user['uid'])
         return render_template('solve-interface.html',
                            question=question_data,
                            schema=format_schema(schema),
