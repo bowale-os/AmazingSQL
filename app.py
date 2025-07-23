@@ -301,7 +301,7 @@ def run_sql(id):
             xp_gain = xp_gain_map.get(question_data['difficulty'], 0)
             update_streak_and_xp_if_passed(db_firestore, user, xp_gain)
             log_user_attempt(db_firestore ,user, question_data, passed)
-            flash(f"+{xp_gain} XP", 'xp')
+            flash(f"🎉 +{xp_gain} XP", 'success')
             # Step 2: Re-fetch updated user data from Firestore
             user_ref = db_firestore.collection('users').document(user['id'])
             updated_user_doc = user_ref.get()
