@@ -239,6 +239,13 @@
     }
 
   </style>
+
+  <script>
+  setTimeout(() => {
+    document.querySelectorAll('.flash-message').forEach(el => el.remove());
+  }, 6000);
+</script>
+  
   {% from 'macros/profile_pic.html' import profile_pic %}
 </head>
 <body>
