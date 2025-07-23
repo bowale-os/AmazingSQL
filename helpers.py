@@ -3,12 +3,12 @@ import sqlite3
 
 def log_user_attempt(db, user, question_data, passed):
     # Log attempt to Firestore, pass or fail
-    user_id = user.get("id")  # 🔐 safely grab it
+    user_id = user.get("uid")  # 🔐 safely grab it
     if not user_id:
         raise ValueError("User object does not have an 'id' key")
     
     attempt_data = {
-        "user_id": user['id'],
+        "user_id": user['uid'],
         "question_id": question_data['id'],
         "difficulty": question_data['difficulty'],
         "passed": passed,
