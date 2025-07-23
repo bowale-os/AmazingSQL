@@ -51,7 +51,7 @@ def compare_user_query(expected_output, user_output):
             ]
             return ('warning', f"Row {idx+1} has incorrect values. " + "; ".join(differences))
 
-    return ('success', 'You did it!')
+    return ('success', 'You solved it!')
 
 
 def humanize_query_error(error: str) -> str:
