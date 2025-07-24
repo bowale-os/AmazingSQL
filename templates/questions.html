@@ -203,9 +203,13 @@
           </td>
 
           <td>
-            {% for tag in q.tags.split(',') %}
+            {% set tags_list = q.tags.split(',') %}
+            {% for tag in tags_list[:2] %}
               <span class="badge bg-secondary me-1">{{ tag.strip() }}</span>
             {% endfor %}
+            {% if tags_list|length > 2 %}
+              <span class="badge bg-secondary">+{{ tags_list|length - 2 }} more</span>
+            {% endif %}
           </td>
 
           <td>
