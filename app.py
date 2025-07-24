@@ -62,6 +62,12 @@ def feedback():
 
     return render_template('feedback.html', form=form)
 
+@app.route('/roadmap')
+def roadmap():
+    user = session.get('user')
+    if not user:
+        return redirect(url_for('login'))
+    return render_template('roadmap.html', user=user)
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -233,7 +239,7 @@ def questions():
 
     all_questions_sorted = sorted(all_questions, key=lambda q: int(q['id']))
     solved_ids = get_solved_question_ids(db_firestore, user['id'])
-    return render_template('questions.html', questions=all_questions_sorted[:20], difficulty=difficulty, query=query, user=user, solved_ids=solved_ids)
+    return render_template('questions.html', questions=all_questions_sorted[:40], difficulty=difficulty, query=query, user=user, solved_ids=solved_ids)
 
 @app.route('/question/<int:id>')
 def view_question(id):

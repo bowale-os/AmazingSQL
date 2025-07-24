@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SQL Roadmap | AmazingSQL</title>
+
+  <!-- Bootstrap + Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+
+  <style>
+    /* =============== Base =============== */
+    body {
+      background-color: #f9fbfc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    /* =============== Navbar =============== */
+    .navbar {
+      background-color: #1b3a57;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      color: #ffffff !important;
+      font-size: 1.4rem;
+    }
+
+    .navbar-text {
+      color: #cfd9e0;
+      font-weight: 500;
+      flex: 1;
+      margin-left: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-link img {
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      object-fit: cover;
+    }
+
+    .btn-outline-light {
+      border-color: #ffffff88;
+    }
+
+    /* =============== Sidebar =============== */
+    .sidebar {
+      background-color: #243447;
+      color: white;
+      min-height: 100vh;
+      padding-top: 2rem;
+    }
+
+    .sidebar h5 {
+      margin-left: 1rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #ccd6dd;
+    }
+
+    .sidebar a {
+      color: #f2f2f2;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-left: 4px solid transparent;
+      transition: 0.25s ease;
+    }
+
+    .sidebar a:hover {
+      background-color: #2e4a5f;
+      border-left: 4px solid #1abc9c;
+      color: #ffffff;
+    }
+
+    /* =============== Main Content =============== */
+    .dashboard {
+      padding: 3rem;
+    }
+
+    .dashboard h2 {
+      font-weight: 700;
+      color: #1b3a57;
+      margin-bottom: 1rem;
+    }
+
+    .video-section {
+      margin-bottom: 3rem;
+    }
+
+
+    iframe {
+      width: 100%;
+      height: 375px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+      transition: transform 0.2s ease;
+    }
+
+    iframe:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+
+    a.playlist-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #2980b9;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    a.playlist-link:hover {
+      color: #1b3a57;
+    }
+
+    .attempt-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.attempt-link:hover {
+  background-color: #0056b3;
+}
+
+.attempt-link.easy {
+  background-color: #28a745;
+}
+
+.attempt-link.medium {
+  background-color: #ffc107;
+  color: black;
+}
+
+.attempt-link.hard {
+  background-color: #dc3545;
+}
+
+.difficulty-link {
+  display: inline-block;
+  margin-top: 8px;
+}
+
+
+
+    @media (max-width: 767px) {
+      .dashboard {
+        padding: 1rem;
+      }
+      iframe {
+        height: 200px;
+      }
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 767px) {
+      .sidebar {
+        min-height: auto;
+        padding: 1rem;
+      }
+      .sidebar h5 {
+        margin-left: 0;
+      }
+    }
+  </style>
+
+  {% from 'macros/profile_pic.html' import profile_pic %}
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">AmazingSQL</a>
+      <span class="navbar-text">Roadmap</span>
+      <a href="{{ url_for('profile') }}" style="margin-right: 1rem;">
+        {{ profile_pic(user, size=40) }}
+      </a>
+      <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 sidebar">
+        <h5>Navigation</h5>
+        <a href="{{ url_for('questions') }}"><i class="bi bi-play-circle-fill"></i> Start Practice</a>
+        <a href="{{ url_for('leaderboard') }}"><i class="bi bi-award-fill"></i> Leaderboard</a>
+        <a href="{{ url_for('roadmap') }}"><i class="bi bi-compass"></i> Roadmap</a>
+        <a href="{{ url_for('feedback') }}"><i class="bi bi-chat-dots"></i> Leave Feedback</a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-9 col-lg-10 p-5 dashboard">
+        <h2>SQL Roadmap</h2>
+        <p class="mb-4">Follow this learning path and you'll be solving questions in no time.</p>
+
+        <div class="video-section">
+          <h5>Absolute Beginner Video</h5>
+          <iframe src="https://www.youtube.com/embed/_vxobA36UN4?si=yMldC40fEQaVaj6v" allowfullscreen></iframe>
+          <a href="/questions?difficulty=easy" class="attempt-link easy difficulty-link">Attempt Easy difficulty questions</a>
+        </div>
+        
+
+        <div class="video-section">
+          <h5>Intermediate Playlist</h5>
+          <iframe src="https://www.youtube.com/embed/videoseries?si=0giO6t1TFic_KltW&amp;list=PLUaB-1hjhk8HTgPnBukmMq7QTe83ANirL" allowfullscreen></iframe>
+          <a href="https://www.youtube.com/embed/videoseries?si=0giO6t1TFic_KltW&amp;list=PLUaB-1hjhk8HTgPnBukmMq7QTe83ANirL" target="_blank" class="playlist-link">Open Playlist on YouTube</a>
+          <br><a href="/questions?difficulty=medium" class="attempt-link medium difficulty-link">Attempt Medium difficulty questions</a>
+        </div>
+
+        <div class="video-section">
+          <h5>Advanced Playlist</h5>
+          <iframe src="https://www.youtube.com/embed/videoseries?si=yI7fD7oJfKi3Qq9_&amp;list=PLUaB-1hjhk8EBZNL4nx4Otoa5Wb--rEpU"  allowfullscreen></iframe>
+          <a href="https://www.youtube.com/embed/videoseries?si=yI7fD7oJfKi3Qq9_&amp;list=PLUaB-1hjhk8EBZNL4nx4Otoa5Wb--rEpU"  target="_blank" class="playlist-link">Open Playlist on YouTube</a>
+          <br><a href="/questions?difficulty=hard" class="attempt-link hard difficulty-link">Attempt Hard difficulty questions</a>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
