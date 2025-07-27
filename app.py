@@ -248,7 +248,7 @@ def view_question(id):
         return redirect(url_for('login'))
     
     schema, headers, expected_output_list, question_data= get_question_data_with_id(id,True)
-    return render_template('solve-interface.html', question=question_data, schema=schema, headers=headers, expected_output_list=expected_output_list, user=user)
+    return render_template('solve-interface.html', question=question_data, schema=schema, headers=headers, expected_output_list=expected_output_list, user=user, next_question_id= int(question_data['id']) + 1)
 
 
 @app.route("/run-sql/<int:id>", methods=["POST", "GET"])
