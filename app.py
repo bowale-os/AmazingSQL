@@ -266,6 +266,7 @@ def run_sql(id):
     #Handle invalid SQL input early
     if not is_valid:
         return render_template('solve-interface.html',
+                               next_question_id= int(question_data['id']) + 1,
                            question=question_data,
                            schema=schema,
                            result=None,
@@ -293,6 +294,7 @@ def run_sql(id):
             update_last_attempted(db_firestore, user['id'])
             #Don't award XP or update streak again
             return render_template('solve-interface.html',
+                                   next_question_id= int(question_data['id']) + 1,
                                 question=question_data,
                                 schema=schema,
                                 result=rows,
@@ -321,6 +323,7 @@ def run_sql(id):
 
         return render_template('solve-interface.html',
                                 question=question_data,
+                                next_question_id= int(question_data['id']) + 1,
                                 schema=schema,
                                 result=rows,
                                 headers=columns,
@@ -334,6 +337,7 @@ def run_sql(id):
         log_user_attempt(db_firestore ,user, question_data, passed=False)
         update_last_attempted(db_firestore, user['id'])
         return render_template('solve-interface.html',
+                               next_question_id= int(question_data['id']) + 1,
                            question=question_data,
                            schema=format_schema(schema),
                            result=None,
