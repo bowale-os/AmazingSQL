@@ -89,6 +89,10 @@ def signup():
             flash("Username already taken. Please choose another.", "error")
             return redirect(url_for('signup'))
 
+        existing_email = users_ref.where("email", '==', email).limit(1).get()
+        if existing_email:
+            flash("Email is already in use. Please choose another or Log in.", "error")
+            return redirect(url_for('signup'))
         # 2. Create user in Firebase Auth
         try:
             user_record = admin_auth.create_user(
@@ -142,7 +146,7 @@ def login():
             try:
                 login_user = pyre_auth.sign_in_with_email_and_password(email, password)
             except:
-                flash("Invalid email or password, try again.", 'error')
+                flash("Invalid email or password. Try again.", 'error')
                 return render_template('login.html', form=form)
             
             uid = login_user['localId']
@@ -163,7 +167,7 @@ def login():
             flash("You were logged in successfully!", 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('There was no registered user with email. Sign up instead.', 'error')
+            flash('There is no registered user with email. Sign up instead.', 'error')
 
     return render_template('login.html', form=form)
 
@@ -356,57 +360,8 @@ def profile():
     return render_template('profile.html', user=user)
 
 
-# @app.route('/add_bio', methods=["POST", "GET"])
-# @login_required
-# def add_bio():
-#     form = BioForm()
-
-#     if form.validate_on_submit():
-#         current_user.bio = form.bio.data
-#         db.session.commit()
-#         flash("Bio updated successfully!", "success")
-#         return redirect(url_for('profile'))
-
-#     #prepopulate if user already has a bio
-#     if request.method == "GET":
-#         form.bio.data = current_user.bio
-
-#     return render_template('add-bio.html', form=form)
-
-
-# @app.route('/edit-profile', methods=["POST", "GET"])
-# @login_required
-# def edit_profile():
-#     # form = EditProfileForm()
-#     # display_name = form.display_name.data
-#     # bio = form.get('bio', None)
-#     # profile_pic = form.get('profile_pic', '')
-#     return render_template('edit-profile.html')
-
-
-
-
-
 @app.route('/logout')
 def logout():
-    # user = session['user']
-    # if not user:
-    # app.logger.info(f"Logging out user: {current_user.get_id()}")
-    # if google.authorized and google.token:
-    #     try:
-    #         token = google.token["access_token"]
-    #         resp = google.post(
-    #             "https://oauth2.googleapis.com/revoke",
-    #             params={'token': token},
-    #             headers={'content-type': 'application/x-www-form-urlencoded'}
-    #         )
-    #         if resp.status_code == 200:
-    #             app.logger.info("Successfully revoked Google token.")
-    #         else:
-    #             app.logger.warning(f"Failed to revoke token: {resp.text}")
-    #     except Exception as e:
-    #         app.logger.warning(f"Error revoking token: {e}")
-
     session.clear()
     return redirect(url_for("home"))
 

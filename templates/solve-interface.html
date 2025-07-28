@@ -218,6 +218,8 @@
     justify-content: space-between;
   }
 
+  
+
 
   </style>
   {% from 'macros/profile_pic.html' import profile_pic %}
@@ -361,10 +363,12 @@
             </div>
       </div>
       <div class="text-end mt-3">
-        <a href="{{ url_for('view_question', id=next_question_id) }}" class="btn btn-success next-btn">
+        <a href="{{ url_for('view_question', id=next_question_id) }}"
+          class="btn btn-success next-btn w-100 w-md-auto">
           Next Question <span class="ms-2">&rarr;</span>
         </a>
       </div>
+
 
     </div>
   </div>
