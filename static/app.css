@@ -13,6 +13,26 @@
   --shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 
+/* Light theme variables */
+.theme-light {
+  --bg: #f6f8fb;
+  --bg-2: #ffffff;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --muted: #5b6b7f;
+  --text: #0f172a;
+  --brand: #2563eb;
+  --brand-2: #06b6d4;
+  --accent: #16a34a;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.theme-dark {
+  /* already covered by default variables */
+}
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {

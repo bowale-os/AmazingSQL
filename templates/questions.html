@@ -47,7 +47,7 @@
         <tr>
           <td class="text-muted fw-semibold">{{ q.id }}</td>
           <td>
-            <a href="{{ url_for('view_question', id=q.id) }}" class="question-link truncate" title="{{ q.title }}">{{ q.title }}</a>
+            <a href="{{ url_for('view_question', id=q.id) }}" class="question-link truncate" title="{{ q.title }}" style="color: var(--text);">{{ q.title }}</a>
           </td>
           <td>
             {% set tags_list = q.tags.split(',') %}

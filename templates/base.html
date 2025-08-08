@@ -9,6 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
   {% block head_extra %}{% endblock %}
+  <script>
+    // Initialize theme early
+    (function() {
+      try {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        window.__APP_THEME__ = theme;
+        window.addEventListener('DOMContentLoaded', function() {
+          document.body.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+        });
+      } catch (e) {}
+    })();
+  </script>
 </head>
 {% from 'macros/profile_pic.html' import profile_pic %}
 <body class="{% block body_class %}{% endblock %}">
@@ -32,6 +46,9 @@
             <a class="btn btn-success" href="{{ url_for('signup') }}">Sign up</a>
             <a class="btn btn-outline-light" href="{{ url_for('login') }}">Log in</a>
           {% endif %}
+          <button id="theme-toggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Toggle theme">
+            <i class="bi bi-sun"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -43,8 +60,9 @@
     {% if messages %}
       <div class="container mt-3">
         {% for category, message in messages %}
-          <div class="alert app-alert alert-{{ 'warning' if category == 'error' else category }}" role="alert">
+          <div class="alert app-alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show" role="alert">
             {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       </div>
@@ -69,6 +87,24 @@
   {% endblock %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var apply = function(theme) {
+        document.body.classList.remove('theme-light', 'theme-dark');
+        document.body.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+        btn.innerHTML = theme === 'dark' ? '<i class="bi bi-moon"></i>' : '<i class="bi bi-sun"></i>';
+        try { localStorage.setItem('theme', theme); } catch(e) {}
+      };
+      var current = window.__APP_THEME__ || (document.body.classList.contains('theme-dark') ? 'dark' : 'light');
+      apply(current);
+      btn.addEventListener('click', function() {
+        current = current === 'dark' ? 'light' : 'dark';
+        apply(current);
+      });
+    })();
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
