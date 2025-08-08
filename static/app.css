@@ -199,6 +199,10 @@ body {
   border-radius: 16px;
   padding: 16px;
 }
+.theme-light .app-sidebar .sidebar-inner {
+  border: 1px solid rgba(0,0,0,0.08);
+  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.03));
+}
 .app-sidebar .brand { color: var(--muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .app-sidebar .nav-link {
   color: var(--text);
@@ -210,6 +214,7 @@ body {
   border: 1px solid transparent;
 }
 .app-sidebar .nav-link:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+.theme-light .app-sidebar .nav-link:hover { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.12); }
 
 /* Uniform spacing helpers */
 .stack-sm > * + * { margin-top: 8px; }
