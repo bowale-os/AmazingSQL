@@ -4,8 +4,10 @@
 {% block title %}User Profile - AmazingSQL{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center py-5">
-  <div class="w-100" style="max-width: 720px;">
+<div class="container py-4">
+  <div class="layout">
+    {% include 'sidebar.html' %}
+    <div class="p-2 p-md-0">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <a class="link-light" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
       <div class="eyebrow">Profile</div>
@@ -43,6 +45,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </div>
 {% endblock %}

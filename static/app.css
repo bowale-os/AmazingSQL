@@ -137,4 +137,43 @@ body {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+/* Layout grid and sidebar */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 991px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 76px;
+  align-self: start;
+}
+.app-sidebar .sidebar-inner {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+  border-radius: 16px;
+  padding: 16px;
+}
+.app-sidebar .brand { color: var(--muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.app-sidebar .nav-link {
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+}
+.app-sidebar .nav-link:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+
+/* Uniform spacing helpers */
+.stack-sm > * + * { margin-top: 8px; }
+.stack-md > * + * { margin-top: 16px; }
+.stack-lg > * + * { margin-top: 24px; }
+
 
