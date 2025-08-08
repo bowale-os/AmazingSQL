@@ -43,6 +43,7 @@ def feedback():
     uid = session.get('uid')
     if not uid:
         return redirect(url_for('login'))
+    user = session.get('user')
     form = FeedbackForm()
     if form.validate_on_submit():
         like = form.like.data.strip()
@@ -60,7 +61,7 @@ def feedback():
         flash("Thank you for your feedback!", "feedback")
         return redirect(url_for('dashboard'))
 
-    return render_template('feedback.html', form=form)
+    return render_template('feedback.html', form=form, user=user)
 
 @app.route('/roadmap')
 def roadmap():
@@ -277,7 +278,8 @@ def run_sql(id):
                            headers=[],
                            expected_output_list=expected_output_list,
                            user_query='',
-                           error_message=error_message)
+                           error_message=error_message,
+                           user=user)
 
     try:
         #Evaluate query and determine correctness
@@ -306,7 +308,8 @@ def run_sql(id):
                                 expected_output_list=expected_output_list,
                                 question_headers=headers,
                                 user_query=user_query,
-                                feedback=('info', 'Good job! You solved this before, but keep practicing.'))
+                                feedback=('info', 'Good job! You solved this before, but keep practicing.'),
+                                user=user)
         
         if passed:
             xp_gain_map = {'easy': 10, 'medium': 20, 'hard': 50}
@@ -334,7 +337,8 @@ def run_sql(id):
                                 expected_output_list=expected_output_list,
                                 question_headers=headers,
                                 user_query=user_query,
-                                feedback=feedback)
+                                feedback=feedback,
+                                user=user)
         
     
     except Exception as e:
@@ -348,7 +352,8 @@ def run_sql(id):
                            headers=[],
                            expected_output_list=expected_output_list,
                            user_query=user_query,
-                           error_message=humanize_query_error(str(e)))
+                           error_message=humanize_query_error(str(e)),
+                           user=user)
 
 
 
