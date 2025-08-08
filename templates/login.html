@@ -1,200 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AmazingSQL - Login</title>
-  <style>
-    /* Reset & base */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9fbfc; /* light background */
-      color: #2c3e50; /* dark text */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    /* Container */
-    .login-container {
-      background: #ffffff;
-      padding: 2.5rem 3rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 420px;
-      box-sizing: border-box;
-      color: #2c3e50;
-    }
+{% extends 'base.html' %}
 
-    h1 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin-bottom: 0.3rem;
-      color: #1b3a57; /* navy blue */
-      text-align: center;
-    }
-    p.subtitle {
-      font-size: 1.1rem;
-      color: #2980b9; /* blue */
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 2rem;
-    }
+{% block title %}AmazingSQL - Login{% endblock %}
 
-    label {
-      font-weight: 600;
-      color: #2c3e50;
-      display: block;
-      margin-bottom: 6px;
-      margin-top: 1rem;
-    }
-    /* Apply styling to inputs with class 'form-input' */
-    .form-input {
-      width: 100%;
-      padding: 10px 14px;
-      font-size: 1rem;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9fbfc;
-      color: #2c3e50;
-      font-family: monospace;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-      outline-offset: 2px;
-      outline-color: transparent;
-      margin-bottom: 0.5rem;
-    }
-    .form-input:focus {
-      border-color: #2980b9;
-      outline-color: #2980b9;
-      background-color: #e6f0fa;
-      color: #1b3a57;
-    }
+{% block navbar %}{{ super() }}{% endblock %}
 
-    /* Error messages */
-    span.error {
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
-      display: block;
-      color: #f39c12; /* orange */
-      font-weight: 600;
-    }
-
-    /* Buttons */
-    button[type="submit"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 1.1rem;
-      background-color: #2980b9; /* blue */
-      color: white;
-      font-weight: 700;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 1.5rem;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 12px rgba(41, 128, 185, 0.6);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    button[type="submit"]:hover {
-      background-color: #1b3a57; /* dark navy */
-      box-shadow: 0 6px 18px rgba(27, 58, 87, 0.8);
-    }
-
-    /* Flash messages */
-    ul.flashes {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 1rem;
-    }
-    ul.flashes li {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
-      font-weight: 600;
-      box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    }
-    .flash-error {
-      background-color: #f39c12;
-      color: #663d00;
-      border: 1px solid #b37300;
-    }
-    .flash-success {
-      background-color: #27ae60;
-      color: #145214;
-      border: 1px solid #196d1f;
-    }
-
-    /* Bottom link */
-    .bottom-link {
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      color: #7f8c8d;
-      text-align: center;
-    }
-    .bottom-link a {
-      color: #2980b9;
-      text-decoration: none;
-      font-weight: 700;
-      transition: color 0.3s ease;
-    }
-    .bottom-link a:hover {
-      color: #1b3a57;
-      text-decoration: underline;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 480px) {
-      .login-container {
-        padding: 1.5rem 2rem;
-      }
-      h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="login-container">
-    <h1>Welcome back!</h1>
-    <p class="subtitle">Login to your AmazingSQL account</p>
+{% block content %}
+<div class="container-narrow py-5">
+  <div class="card-modern p-4 p-md-5">
+    <h1 class="headline-xl text-center mb-2">Welcome back</h1>
+    <p class="text-center subhead mb-4">Login to your AmazingSQL account</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul class="flashes">
+      {% if messages %}
         {% for category, message in messages %}
-          <li class="flash-{{ category }}">{{ message }}</li>
+          <div class="alert app-alert alert-{{ 'warning' if category == 'error' else category }}">{{ message }}</div>
         {% endfor %}
-      </ul>
-    {% endif %}
+      {% endif %}
     {% endwith %}
 
     <form method="POST" action="{{ url_for('login') }}" novalidate>
       {{ form.csrf_token }}
 
-      <label for="email">Email:</label>
-      {{ form.email(id="email", class_="form-input") }}
+      <label class="form-label mt-2" for="email">Email</label>
+      {{ form.email(id='email', class_='form-control') }}
       {% for error in form.email.errors %}
-        <span class="error">{{ error }}</span>
+        <div class="text-warning small">{{ error }}</div>
       {% endfor %}
 
-      <label for="password">Password:</label>
-      {{ form.password(id="password", class_="form-input") }}
+      <label class="form-label mt-3" for="password">Password</label>
+      {{ form.password(id='password', class_='form-control') }}
       {% for error in form.password.errors %}
-        <span class="error">{{ error }}</span>
+        <div class="text-warning small">{{ error }}</div>
       {% endfor %}
 
-      <button type="submit">{{ form.submit.label.text }}</button>
+      <button type="submit" class="btn btn-gradient w-100 mt-4">{{ form.submit.label.text }}</button>
     </form>
 
-    <div class="bottom-link">
-      <span>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></span>
+    <div class="text-center mt-3 subhead">
+      Don’t have an account? <a class="link-light fw-bold" href="{{ url_for('signup') }}">Sign up</a>
     </div>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}
+

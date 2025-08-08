@@ -1,281 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>AmazingSQL</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+{% extends 'base.html' %}
 
-    body {
-      margin: 0;
-      font-family: 'Sora', sans-serif;
-      background: linear-gradient(135deg, #0a0f1a 0%, #12233a 100%);
-      color: #e0e6f1;
-      min-height: 100vh;
-    }
+{% block title %}AmazingSQL{% endblock %}
 
-    .navbar {
-      backdrop-filter: blur(12px);
-      background-color: rgba(10, 15, 26, 0.85);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+{% block navbar %}
+  {{ super() }}
+{% endblock %}
 
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.6rem;
-      color: #00f0ff;
-      user-select: none;
-    }
-
-    .hero {
-      min-height: 60vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 60px 20px 40px 20px;
-      position: relative;
-      overflow: visible;
-      background: transparent;
-      z-index: 1;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      background: linear-gradient(to right, #00f0ff, #27ae60);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      user-select: none;
-      text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
-    }
-
-    .hero p.subtitle {
-      font-size: 1.1rem;
-      font-weight: 500;
-      max-width: 640px;
-      margin: 0 auto 36px auto;
-      color: #8ac6f7;
-      font-style: italic;
-      user-select: none;
-      text-shadow: 0 0 5px rgba(138, 198, 247, 0.5);
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin-bottom: 20px;
-      color: #cbd5e1;
-      user-select: none;
-      text-shadow: 0 0 4px rgba(203, 213, 225, 0.3);
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      z-index: 2;
-      user-select: none;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      padding: 14px 28px;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 999px;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      box-shadow: 0 6px 20px rgba(39, 174, 96, 0.25);
-      user-select: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 120px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(90deg, #27ae60, #1e8449);
-      color: white;
-      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.6);
-    }
-
-    .btn-primary:hover,
-    .btn-primary:focus {
-      background: linear-gradient(90deg, #1e8449, #27ae60);
-      box-shadow: 0 6px 18px rgba(39, 174, 96, 0.8);
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    .btn-secondary {
-      background-color: #2980b9;
-      color: white;
-      box-shadow: 0 4px 12px rgba(41, 128, 185, 0.6);
-    }
-
-    .btn-secondary:hover,
-    .btn-secondary:focus {
-      background-color: #1b3a57;
-      box-shadow: 0 6px 18px rgba(27, 58, 87, 0.8);
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    /* Scroll down arrow */
-    .scroll-down {
-      margin-top: 20px;
-      color: #27ae60;
-      cursor: pointer;
-      animation: bounce 2.5s infinite;
-      z-index: 2;
-      font-size: 2rem;
-      user-select: none;
-      filter: drop-shadow(0 0 3px #27ae60);
-      transition: color 0.3s ease;
-    }
-
-    .scroll-down:hover {
-      color: #1e8449;
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(12px);
-      }
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      padding: 80px 40px 100px 40px;
-      max-width: 1100px;
-      margin: auto;
-      background: rgba(30, 40, 60, 0.7);
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(39, 174, 96, 0.2);
-      user-select: none;
-    }
-
-    .feature {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(14px);
-      border-radius: 18px;
-      padding: 30px;
-      box-shadow: 0 0 24px rgba(39, 174, 96, 0.1);
-      transition: all 0.4s ease;
-    }
-
-    .feature:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 48px rgba(39, 174, 96, 0.25);
-    }
-
-    .feature h3 {
-      color: #27ae60;
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .feature p {
-      font-size: 1rem;
-      color: #cbd5e1;
-      line-height: 1.4;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      font-size: 0.9rem;
-      color: #94a3b8;
-      border-top: 1px solid #1e293b;
-      background-color: #0a0f1a;
-      user-select: none;
-    }
-
-    footer a {
-      color: #27ae60;
-      text-decoration: none;
-      margin: 0 8px;
-      transition: color 0.3s ease;
-    }
-
-    footer a:hover {
-      color: #1e8449;
-      text-decoration: underline;
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-      .features {
-        padding: 50px 20px 60px 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">AmazingSQL</a>
+{% block content %}
+  <div class="hero-wrap">
+    <div class="hero">
+      <div class="eyebrow mb-2">Practice • Compete • Master</div>
+      <h1 class="headline-xl mb-3">Master SQL. Compete. Learn Faster.</h1>
+      <p class="subhead mx-auto" style="max-width: 760px;">
+        Learn SQL the unforgettable way — solve real-world challenges, get instant feedback, and climb the leaderboard.
+      </p>
+      <div class="d-flex cta mt-4">
+        <a href="{{ url_for('signup') }}" class="btn btn-gradient px-4 py-2">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline-light px-4 py-2">Log in</a>
+      </div>
     </div>
-  </nav>
+  </div>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>Master SQL. Compete. Learn Faster.</h1>
-    <p class="subtitle">Learn SQL the competitive and unforgettable way — through solving real-world challenges and receiving instant feedback.</p>
-    <p>AmazingSQL is the fastest way to sharpen your SQL skills through real-world challenges, and SQL duels.</p>
-    <div class="cta-buttons">
-      <a href="{{ url_for('signup') }}" class="btn-primary">Sign up</a>
-      <a href="{{ url_for('login') }}" class="btn-secondary">Log in</a>
-    </div>
-    <a href="#features" class="scroll-down" aria-label="Scroll down to features">
-      <i class="bi bi-chevron-double-down"></i>
-    </a>
-  </section>
-
-  <!-- Features Section -->
-  <section id="features" class="features">
-    <div class="feature">
+  <div id="features" class="feature-grid">
+    <div class="feature-card">
       <h3>⚡ Instant Feedback</h3>
-      <p>Submit queries and get graded instantly.</p>
+      <p>Submit queries and get graded in real-time with actionable explanations.</p>
     </div>
-    <div class="feature">
+    <div class="feature-card">
       <h3>🧠 Real SQL Problems</h3>
-      <p>Practice with challenges inspired by everyday challenges.</p>
+      <p>Practice with challenges inspired by real datasets and interviews.</p>
     </div>
-    <div class="feature">
+    <div class="feature-card">
       <h3>📊 Progress Tracking</h3>
-      <p>Earn XP, compete, and marvel at your growth.</p>
+      <p>Earn XP, keep streaks, and see your growth over time.</p>
     </div>
-  </section>
+  </div>
+{% endblock %}
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Daniel Sobowale. All rights reserved.</p>
-    <a href="mailto:danielsobowale67@gmail.com">Contact</a> •
-    <a href="https://www.github.com/bowale-os" target="_blank" rel="noopener noreferrer">GitHub</a>
-  </footer>
-
-</body>
-</html>

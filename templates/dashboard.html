@@ -1,212 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{{user.first_name}}'s Dashboard</title>
+{% extends 'base.html' %}
+{% from 'macros/profile_pic.html' import profile_pic %}
 
-  <!-- Bootstrap + Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+{% block title %}{{ user.first_name }}'s Dashboard{% endblock %}
 
-  <style>
-    /* =============== Base =============== */
-    body {
-      background-color: #f9fbfc;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #2c3e50;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    /* =============== Navbar =============== */
-    .navbar {
-      background-color: #1b3a57;
-      padding: 0.75rem 1.5rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    }
-
-    .navbar-brand {
-      font-weight: 800;
-      color: #ffffff !important;
-      font-size: 1.4rem;
-    }
-
-    .navbar-text {
-      color: #cfd9e0;
-      font-weight: 500;
-      flex: 1;
-      margin-left: 1rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .profile-link img {
-      border-radius: 50%;
-      border: 2px solid #ffffff;
-      object-fit: cover;
-    }
-
-    .btn-outline-light {
-      border-color: #ffffff88;
-    }
-
-    /* =============== Sidebar =============== */
-    .sidebar {
-      background-color: #243447;
-      color: white;
-      min-height: 100vh;
-      padding-top: 2rem;
-    }
-
-    .sidebar h5 {
-      margin-left: 1rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
-      color: #ccd6dd;
-    }
-
-    .sidebar a {
-      color: #f2f2f2;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      border-left: 4px solid transparent;
-      transition: 0.25s ease;
-    }
-
-    .sidebar a:hover {
-      background-color: #2e4a5f;
-      border-left: 4px solid #1abc9c;
-      color: #ffffff;
-    }
-
-    /* =============== Dashboard Cards =============== */
-    .dashboard h2 {
-      font-weight: 700;
-      color: #1b3a57;
-      margin-bottom: 1rem;
-    }
-
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-    }
-
-    .card-title {
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .card-text {
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-
-    .bg-success { background-color: #27ae60 !important; }
-    .bg-info { background-color: #2980b9 !important; }
-    .bg-warning { background-color: #f39c12 !important; }
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 767px) {
-      .sidebar {
-        min-height: auto;
-        padding: 1rem;
-      }
-      .sidebar h5 {
-        margin-left: 0;
-      }
-    }
-
-  
-  </style>
-  {% from 'macros/profile_pic.html' import profile_pic %}
-
-</head>
-<body>
-
-  <!-- Top Nav -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-    <a class="navbar-brand" href="#">AmazingSQL</a>
-
-    <div class="d-flex align-items-center gap-2">
-      <a href="{{ url_for('profile') }}">
-        {{ profile_pic(user, size=40) }}
-      </a>
-      <a class="btn btn-outline-warning" href="{{ url_for('feedback') }}">
-        Leave Feedback
-      </a>
-      <a class="btn btn-outline-light" href="{{ url_for('logout') }}">
-        Logout
-      </a>
-    </div>
-  </div>
-</nav>
-
-
-  <div class="container-fluid">
-    <div class="row g-0">
-      <!-- Sidebar -->
-      <div class="col-md-3 col-lg-2 sidebar">
-        <h5>Navigation</h5>
-        <a href="{{ url_for('questions') }}"><i class="bi bi-play-circle-fill"></i> Start Practice</a>
-        <!-- <a href="#"><i class="bi bi-graph-up-arrow"></i> Progress</a> -->
-        <a href="{{url_for('leaderboard')}}"><i class="bi bi-award-fill"></i> Leaderboard</a>
-        <a href="{{url_for('roadmap')}}"><i class="bi bi-compass"></i> Roadmap</a>
-        <a href="{{url_for('feedback')}}"><i class="bi bi-chat-dots"></i> Leave Feedback </a>
+{% block content %}
+<div class="container-fluid">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 p-3 p-md-4">
+      <div class="glass rounded-3 h-100 p-3">
+        <h5 class="eyebrow mb-3">Navigation</h5>
+        <div class="d-flex flex-column">
+          <a class="py-2 px-2 rounded-2 text-decoration-none link-light" href="{{ url_for('questions') }}"><i class="bi bi-play-circle-fill me-2"></i> Start Practice</a>
+          <a class="py-2 px-2 rounded-2 text-decoration-none link-light" href="{{ url_for('leaderboard') }}"><i class="bi bi-award-fill me-2"></i> Leaderboard</a>
+          <a class="py-2 px-2 rounded-2 text-decoration-none link-light" href="{{ url_for('roadmap') }}"><i class="bi bi-compass me-2"></i> Roadmap</a>
+          <a class="py-2 px-2 rounded-2 text-decoration-none link-light" href="{{ url_for('feedback') }}"><i class="bi bi-chat-dots me-2"></i> Leave Feedback</a>
+        </div>
       </div>
+    </div>
 
-      <!-- Main Content -->
-      <div class="col-md-9 col-lg-10 p-5 dashboard">
-        <h2>Dashboard</h2>
-        <p class="mb-4">This is your control center. Use the menu to practice SQL, track progress, and compete with others.</p>
+    <!-- Main Content -->
+    <div class="col-md-9 col-lg-10 p-4 p-md-5">
+      <h2 class="headline-xl mb-3">Dashboard</h2>
+      <p class="subhead mb-4">Your control center to practice SQL, track progress, and compete with others.</p>
 
-        <div class="row">
-          <div class="col-md-4 mb-4">
-            <div class="card text-white bg-success">
-              <div class="card-body">
-                <h5 class="card-title">Problems Solved</h5>
-                <p class="card-text">{{num_questions_solved}}</p>
-              </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="card-modern p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="m-0">Problems Solved</h5>
+              <span class="badge bg-success">All-time</span>
             </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="card text-white bg-info">
-              <div class="card-body">
-                <h5 class="card-title">Current Streak</h5>
-                <p class="card-text">{{user.current_streak}} {{"days" if user.current_streak != 1 else "day"}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="card text-white bg-warning">
-              <div class="card-body">
-                <h5 class="card-title">XP</h5>
-                <p class="card-text">{{user.xp}}</p>
-              </div>
-            </div>
+            <div class="display-6 fw-bold mt-2">{{ num_questions_solved }}</div>
           </div>
         </div>
-
+        <div class="col-md-4">
+          <div class="card-modern p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="m-0">Current Streak</h5>
+              <span class="badge bg-info">Active</span>
+            </div>
+            <div class="display-6 fw-bold mt-2">{{ user.current_streak }} {{ "days" if user.current_streak != 1 else "day" }}</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-modern p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="m-0">XP</h5>
+              <span class="badge bg-warning text-dark">Total</span>
+            </div>
+            <div class="display-6 fw-bold mt-2">{{ user.xp }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</div>
+{% endblock %}
 
-</body>
-</html>
