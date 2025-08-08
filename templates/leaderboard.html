@@ -10,29 +10,29 @@
     <div class="p-2 p-md-0">
       <h2 class="headline-xl text-center">🏆 All Time Leaderboard</h2>
       <div class="table-responsive table-modern mt-4">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0" aria-label="Leaderboard">
           <thead>
             <tr>
-              <th style="width: 80px;">Rank</th>
-              <th>User</th>
-              <th>XP</th>
-              <th>Last XP</th>
+              <th class="col-rank">Rank</th>
+              <th class="col-user">User</th>
+              <th class="col-xp">XP</th>
+              <th class="col-last">Last XP</th>
             </tr>
           </thead>
           <tbody>
             {% for user in users %}
             <tr>
-              <td>
+              <td class="text-center">
                 <div class="rank-icon glass" style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ loop.index }}</div>
               </td>
-              <td>
-                <div class="d-flex justify-content-center align-items-center gap-2">
+              <td class="col-user">
+                <div class="user-cell">
                   {{ profile_pic(user, size=32) }}
-                  <span class="fw-semibold" style="color: var(--brand);">@{{ user['username'] }}</span>
+                  <span class="username">@{{ user['username'] }}</span>
                 </div>
               </td>
-              <td class="fw-bold">{{ user['xp'] }}</td>
-              <td class="last-solved subhead">
+              <td class="fw-bold text-center">{{ user['xp'] }}</td>
+              <td class="last-solved subhead text-center">
                 {% if user['last_correct_date'] %}
                   {{ user['last_correct_date'].strftime('%b %d, %Y') }}
                 {% else %}

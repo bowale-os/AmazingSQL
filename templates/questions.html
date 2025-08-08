@@ -35,21 +35,19 @@
     <table class="table table-striped table-hover align-middle mb-0" aria-label="Questions list">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Tags</th>
-          <th>Difficulty</th>
-          <th></th>
+          <th class="col-id">#</th>
+          <th class="col-title">Title</th>
+          <th class="col-tags">Tags</th>
+          <th class="col-xp">Difficulty</th>
+          <th class="col-xp"></th>
         </tr>
       </thead>
       <tbody>
         {% for q in questions %}
         <tr>
-          <td>{{ q.id }}</td>
+          <td class="text-muted fw-semibold">{{ q.id }}</td>
           <td>
-            <a href="{{ url_for('view_question', id=q.id) }}" class="link-light fw-semibold">
-              {{ q.title }}
-            </a>
+            <a href="{{ url_for('view_question', id=q.id) }}" class="question-link truncate" title="{{ q.title }}">{{ q.title }}</a>
           </td>
           <td>
             {% set tags_list = q.tags.split(',') %}
