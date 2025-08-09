@@ -5,6 +5,7 @@
   --card: #111a33;
   --muted: #9fb0c7;
   --text: #79818b;
+  --placeholder: #a9b5c2;
   --brand: #60a5fa; /* blue */
   --brand-2: #22d3ee; /* cyan */
   --accent: #34d399; /* green */
@@ -21,6 +22,7 @@
   --card: #ffffff;
   --muted: #5b6b7f;
   --text: #0f172a;
+  --placeholder: #94a3b8;
   --brand: #2563eb;
   --brand-2: #06b6d4;
   --accent: #16a34a;
@@ -160,6 +162,13 @@ body {
   border-color: rgba(96,165,250,0.6) !important;
   background: rgba(255,255,255,0.06) !important;
   box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
+}
+/* Lighter placeholders (applies to questions search, etc.) */
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder) !important;
+  opacity: 1; /* ensure consistent appearance across browsers */
 }
 
 /* Focus visibility for keyboard users */
