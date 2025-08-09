@@ -130,12 +130,15 @@ body {
 .table-modern { overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
 .table-modern thead { background: rgba(255,255,255,0.06); color: var(--text); }
 .table-modern tbody tr:hover { background: rgba(255,255,255,0.03); }
+.table-modern table { table-layout: fixed; width: 100%; }
 .table-modern th, .table-modern td { vertical-align: middle; }
+.table-modern th, .table-modern td { word-break: break-word; overflow-wrap: anywhere; }
 .table-modern .col-id { width: 64px; text-align: center; }
 .table-modern .col-rank { width: 64px; text-align: center; }
 .table-modern .col-xp { width: 120px; text-align: center; }
 .table-modern .col-last { width: 160px; text-align: center; }
 .table-modern .col-user, .table-modern .col-title, .table-modern .col-tags { text-align: left; }
+.table-modern .col-tags { width: 240px; }
 .table-modern .user-cell { display: flex; align-items: center; gap: 10px; }
 .table-modern .username { color: var(--brand); font-weight: 600; }
 
@@ -144,7 +147,7 @@ body {
 .question-link:hover { text-decoration: underline; }
 
 /* Truncation helpers for table cells */
-.truncate { max-width: 520px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.truncate { display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wrap { white-space: normal; word-break: break-word; }
 
 /* Forms */
@@ -183,6 +186,7 @@ body {
   grid-template-columns: 260px 1fr;
   gap: 16px;
   align-items: start;
+  overflow: hidden; /* prevent children from causing horizontal overflow */
 }
 @media (max-width: 991px) {
   .layout { grid-template-columns: 1fr; }
@@ -192,6 +196,7 @@ body {
   position: sticky;
   top: 76px;
   align-self: start;
+  min-width: 0; /* allow flex/grid truncation */
 }
 .app-sidebar .sidebar-inner {
   border: 1px solid rgba(255,255,255,0.1);
@@ -200,6 +205,7 @@ body {
   padding: 16px;
   max-height: calc(100vh - 120px);
   overflow: auto;
+  max-width: 100%;
 }
 .theme-light .app-sidebar .sidebar-inner {
   border: 1px solid rgba(0,0,0,0.08);
@@ -214,13 +220,23 @@ body {
   align-items: center;
   gap: 10px;
   border: 1px solid transparent;
+  min-width: 0;
 }
 .app-sidebar .nav-link:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
 .theme-light .app-sidebar .nav-link:hover { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.12); }
 
+/* Ensure text in sidebar links doesn't cause horizontal overflow */
+.app-sidebar .nav-link span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Limit vertical growth of large content areas and enable scrolling */
-.table-container-fixed {
-  max-height: calc(100vh - 220px);
+.content-scroll {
+  max-height: calc(100vh - 140px);
   overflow: auto;
 }
 

@@ -7,7 +7,7 @@
 <div class="container py-4">
   <div class="layout">
     {% include 'sidebar.html' %}
-    <div class="p-2 p-md-0">
+    <div class="p-2 p-md-0 content-scroll">
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h2 class="headline-xl m-0">Practice SQL Questions</h2>
     <form id="search-form" action="{{ url_for('questions') }}" method="GET" novalidate class="d-flex align-items-center gap-2 flex-wrap">
@@ -31,7 +31,7 @@
       <button id="clear-filters" class="btn btn-outline-light mt-3">Clear filters</button>
     </div>
   {% else %}
-  <div class="table-responsive table-modern mt-3 table-container-fixed">
+  <div class="table-modern mt-3">
     <table class="table table-striped table-hover align-middle mb-0" aria-label="Questions list">
       <thead>
         <tr>
