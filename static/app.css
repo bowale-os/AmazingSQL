@@ -198,8 +198,8 @@ textarea::placeholder {
   overflow: hidden; /* prevent children from causing horizontal overflow */
 }
 @media (max-width: 991px) {
-  .layout { grid-template-columns: 1fr; row-gap: 24px; }
-  .app-sidebar { position: static; top: auto; margin-top: 10px; margin-bottom: 24px; }
+  .layout { grid-template-columns: 1fr; row-gap: 20px; }
+  .app-sidebar { position: static; top: auto; margin-top: 4px; margin-bottom: 44px; }
   .content-scroll { max-height: none; overflow: visible; }
   /* add gentle top padding to main content when stacked */
   .layout > :not(.app-sidebar) { padding-top: 16px; }
@@ -207,7 +207,7 @@ textarea::placeholder {
 
 .app-sidebar {
   position: sticky;
-  top: 76px;
+  top: clamp(80px, 18vh, 220px);
   align-self: start;
   min-width: 0; /* allow flex/grid truncation */
 }
@@ -251,6 +251,11 @@ textarea::placeholder {
 .content-scroll {
   max-height: calc(100vh - 140px);
   overflow: auto;
+}
+
+/* Push main content down to visually align with sidebar (use on pages that feel too top-heavy) */
+.page-main-offset {
+  padding-top: clamp(40px, 12vh, 140px);
 }
 
 /* Sticky table headers when scrolling */
