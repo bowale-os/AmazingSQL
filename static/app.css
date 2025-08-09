@@ -198,8 +198,10 @@ textarea::placeholder {
   overflow: hidden; /* prevent children from causing horizontal overflow */
 }
 @media (max-width: 991px) {
-  .layout { grid-template-columns: 1fr; row-gap: 20px; }
-  .app-sidebar { position: static; top: auto; margin-top: 4px; margin-bottom: 44px; }
+  /* Bring content closer to navbar and use grid gap for separation */
+  .container.py-4 { padding-top: 8px; }
+  .layout { grid-template-columns: 1fr; row-gap: 40px; }
+  .app-sidebar { position: static; top: auto; margin-top: 0; margin-bottom: 0; }
   .content-scroll { max-height: none; overflow: visible; }
   /* add gentle top padding to main content when stacked */
   .layout > :not(.app-sidebar) { padding-top: 16px; }
