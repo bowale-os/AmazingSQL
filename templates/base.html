@@ -105,6 +105,22 @@
       });
     })();
   </script>
+  <script>
+    (function() {
+      document.addEventListener('click', function(event) {
+        var btn = event.target.closest('.toggle-password');
+        if (!btn) return;
+        var wrapper = btn.closest('.password-wrapper');
+        if (!wrapper) return;
+        var input = wrapper.querySelector('input');
+        if (!input) return;
+        var isText = input.getAttribute('type') === 'text';
+        input.setAttribute('type', isText ? 'password' : 'text');
+        btn.setAttribute('aria-label', isText ? 'Show password' : 'Hide password');
+        btn.innerHTML = isText ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+      });
+    })();
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

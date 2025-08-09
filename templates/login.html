@@ -18,7 +18,7 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST" action="{{ url_for('login') }}" novalidate>
+    <form method="POST" action="{{ url_for('login') }}">
       {{ form.csrf_token }}
 
       <label class="form-label mt-2" for="email">Email</label>
@@ -28,7 +28,12 @@
       {% endfor %}
 
       <label class="form-label mt-3" for="password">Password</label>
-      {{ form.password(id='password', class_='form-control') }}
+      <div class="password-wrapper">
+        {{ form.password(id='password', class_='form-control') }}
+        <button type="button" class="toggle-password" aria-label="Show password">
+          <i class="bi bi-eye-slash"></i>
+        </button>
+      </div>
       {% for error in form.password.errors %}
         <div class="text-warning small">{{ error }}</div>
       {% endfor %}

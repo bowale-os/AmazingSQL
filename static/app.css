@@ -299,3 +299,23 @@ textarea::placeholder {
   .table-modern .col-xp { width: 96px; }
 }
 
+/* Password reveal toggle */
+.password-wrapper { position: relative; }
+.password-wrapper .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 4px;
+  line-height: 1;
+}
+.password-wrapper .toggle-password:hover { color: var(--text); }
+.password-wrapper input.form-control { padding-right: 44px; }
+
+/* Hide native Edge/IE password reveal/clear to avoid double-eye */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear { display: none; }
+
