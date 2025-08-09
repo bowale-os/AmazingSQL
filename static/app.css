@@ -190,6 +190,7 @@ body {
 }
 @media (max-width: 991px) {
   .layout { grid-template-columns: 1fr; }
+  .app-sidebar { margin-bottom: 16px; }
 }
 
 .app-sidebar {
