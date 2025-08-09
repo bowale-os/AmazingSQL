@@ -198,6 +198,8 @@ body {
   background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
   border-radius: 16px;
   padding: 16px;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
 }
 .theme-light .app-sidebar .sidebar-inner {
   border: 1px solid rgba(0,0,0,0.08);
@@ -215,6 +217,15 @@ body {
 }
 .app-sidebar .nav-link:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
 .theme-light .app-sidebar .nav-link:hover { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.12); }
+
+/* Limit vertical growth of large content areas and enable scrolling */
+.table-container-fixed {
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* Sticky table headers when scrolling */
+.table-modern thead th { position: sticky; top: 0; z-index: 2; }
 
 /* Uniform spacing helpers */
 .stack-sm > * + * { margin-top: 8px; }
