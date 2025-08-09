@@ -124,10 +124,31 @@ def signup():
             "last_correct_date": None
         }
         users_ref.document(uid).set(user_profile)
-        # login_user = pyre_auth.sign_in_with_email_and_password(email, password)
 
-        flash("Account created successfully! Log in", "success")
-        return redirect(url_for('login'))
+        # Auto-login the user after successful signup
+        try:
+            login_user = pyre_auth.sign_in_with_email_and_password(email, password)
+            uid = login_user['localId']
+            user_doc = db_firestore.collection('users').document(uid).get()
+            if user_doc.exists:
+                user_profile = user_doc.to_dict()
+            else:
+                user_profile = None
+
+            user_profile_copy = (user_profile or {}).copy()
+            # ensure id field is present and remove any heavy fields
+            user_profile_copy['id'] = uid
+            user_profile_copy.pop('profile_pic_base64', None)
+
+            session['uid'] = uid
+            session['user'] = user_profile_copy
+            session['idToken'] = login_user['idToken']
+            flash(f"Welcome, {first_name}! Your account has been created.", 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            # If auto-login fails for any reason, fall back to login page
+            flash("Account created. Please log in.", 'success')
+            return redirect(url_for('login'))
 
     return render_template("signup.html", form=form)
 
