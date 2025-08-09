@@ -362,7 +362,26 @@ def profile():
     user = session['user']
     if not user:
         return redirect(url_for('login'))
-    return render_template('profile.html', user=user)
+
+    attempts_ref = db_firestore.collection('user_attempts')
+    passed_attempts = attempts_ref.where('user_id', '==', user['id'])\
+                                 .where('passed', '==', True).stream()
+
+    solved_questions = set()
+    for attempt in passed_attempts:
+        data = attempt.to_dict()
+        solved_questions.add(data['question_id'])
+    
+    num_questions_solved = len(solved_questions)
+
+    user_ref = db_firestore.collection('users').document(user['id'])
+    user_doc = user_ref.get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+    else:
+        user_data = None
+
+    return render_template('profile.html', user=user, num_questions_solved=num_questions_solved, user_data=user_data)
 
 
 @app.route('/logout')

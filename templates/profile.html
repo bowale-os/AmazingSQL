@@ -35,12 +35,12 @@
 
       <div class="mt-4">
         <div class="eyebrow mb-2">Bio</div>
-        <div class="glass p-3 rounded-3">{{ user.bio or 'This user has not added a bio yet.' }}</div>
+        <div class="glass p-3 rounded-3">{{ user_data['bio'] if user_data['bio'] else 'This user has not added a bio yet.' }}</div>
       </div>
 
       <div class="d-flex gap-3 justify-content-between text-center mt-4">
         <div class="flex-fill glass p-3 rounded-3">
-          <div class="fs-3 fw-bold">{{ session['queries_solved'] or 0 }}</div>
+          <div class="fs-3 fw-bold">{{ num_questions_solved if num_questions_solved else 0 }}</div>
           <div class="subhead">Queries Solved</div>
         </div>
       </div>
