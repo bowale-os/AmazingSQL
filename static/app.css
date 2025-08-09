@@ -12,6 +12,10 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   --shadow: 0 20px 60px rgba(0,0,0,0.35);
+  /* Scrollbar (dark by default) */
+  --scrollbar-thumb: rgba(96,165,250,0.35);
+  --scrollbar-thumb-hover: rgba(96,165,250,0.55);
+  --scrollbar-track: transparent;
 }
 
 /* Light theme variables */
@@ -29,12 +33,15 @@
   --warning: #b45309;
   --danger: #b91c1c;
   --shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --scrollbar-thumb: rgba(37,99,235,0.45);
+  --scrollbar-thumb-hover: rgba(37,99,235,0.65);
+  --scrollbar-track: rgba(0,0,0,0.04);
 }
 
 /* .theme-dark intentionally uses root variables */
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; min-height: 100vh; }
 body {
   margin: 0;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -42,6 +49,9 @@ body {
   background: radial-gradient(1200px 600px at 10% -10%, rgba(96,165,250,0.15), transparent 60%),
               radial-gradient(1000px 500px at 110% 10%, rgba(34,211,238,0.12), transparent 50%),
               linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* keep header/footer visible; scroll only main */
 }
 
 .app-navbar {
@@ -61,7 +71,7 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.app-main { min-height: calc(100vh - 140px); }
+.app-main { flex: 1 1 auto; overflow: auto; }
 
 .app-footer {
   border-top: 1px solid rgba(255,255,255,0.06);
@@ -138,9 +148,16 @@ body {
 .table-modern .col-xp { width: 120px; text-align: center; }
 .table-modern .col-last { width: 160px; text-align: center; }
 .table-modern .col-user, .table-modern .col-title, .table-modern .col-tags { text-align: left; }
+.questions-table th.col-xp { padding-left: 6px; text-align: left; }
+.questions-table td:nth-child(4) { padding-left: 6px; }
 .table-modern .col-tags { width: 240px; }
 .table-modern .user-cell { display: flex; align-items: center; gap: 10px; }
 .table-modern .username { color: var(--brand); font-weight: 600; }
+
+/* More gap between rank and user on leaderboard */
+.leaderboard-table td.col-user, .leaderboard-table th.col-user {
+  padding-left: 14px;
+}
 
 /* Question title link legibility */
 .question-link { color: var(--text); text-decoration: none; font-weight: 600; }
@@ -318,4 +335,101 @@ textarea::placeholder {
 /* Hide native Edge/IE password reveal/clear to avoid double-eye */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear { display: none; }
+
+/* Themed minimal scrollbars (Firefox + WebKit) */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* WebKit */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box; /* creates a thin thumb */
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* --- Light theme definition improvements --- */
+.theme-light .subhead { color: #475569; }
+
+.theme-light .card-modern {
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.theme-light .glass {
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.theme-light .table-modern thead {
+  background: rgba(0,0,0,0.04);
+}
+.theme-light .table-modern tbody tr:hover {
+  background: rgba(0,0,0,0.03);
+}
+.theme-light .table-striped>tbody>tr:nth-of-type(odd)>* {
+  --bs-table-accent-bg: rgba(0,0,0,0.02);
+}
+
+.theme-light .form-control,
+.theme-light .form-select,
+.theme-light textarea {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(0,0,0,0.14) !important;
+}
+.theme-light .form-control:focus,
+.theme-light .form-select:focus,
+.theme-light textarea:focus {
+  border-color: rgba(37,99,235,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.theme-light .btn-outline-light {
+  border-color: rgba(0,0,0,0.25) !important;
+  color: #0f172a !important;
+}
+
+.theme-light .app-footer {
+  /* Match the light navbar styling */
+  background: rgba(0, 0, 0, 0.12);
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Footer link visibility and hover contrast */
+.app-footer a {
+  /* Match AmazingSQL brand text style */
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* fallback */
+  text-decoration: none;
+}
+.app-footer a:hover,
+.app-footer a:focus {
+  background: linear-gradient(90deg, var(--brand-2), var(--brand));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: underline;
+}
+
+
 

@@ -22,14 +22,14 @@
       {{ form.csrf_token }}
 
       <label class="form-label mt-2" for="email">Email</label>
-      {{ form.email(id='email', class_='form-control') }}
+      {{ form.email(id='email', class_='form-control', type='email', autocomplete='email') }}
       {% for error in form.email.errors %}
         <div class="text-warning small">{{ error }}</div>
       {% endfor %}
 
       <label class="form-label mt-3" for="password">Password</label>
       <div class="password-wrapper">
-        {{ form.password(id='password', class_='form-control') }}
+        {{ form.password(id='password', class_='form-control', autocomplete='current-password') }}
         <button type="button" class="toggle-password" aria-label="Show password">
           <i class="bi bi-eye-slash"></i>
         </button>

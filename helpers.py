@@ -1,7 +1,10 @@
 from datetime import datetime, timedelta, timezone, date
+import uuid
+from io import BytesIO
+from PIL import Image, UnidentifiedImageError
 import sqlite3
 
-def log_user_attempt(db, user, question_data, passed):
+def log_user_attempt(db, user, question_data, passed, xp_awarded: int = 0):
     # Log attempt to Firestore, pass or fail
     user_id = user.get("id")  # 🔐 safely grab it
     if not user_id:
@@ -12,7 +15,8 @@ def log_user_attempt(db, user, question_data, passed):
         "question_id": question_data['id'],
         "difficulty": question_data['difficulty'],
         "passed": passed,
-        "submitted_at": datetime.now(timezone.utc)
+        "submitted_at": datetime.now(timezone.utc),
+        "xp_awarded": int(xp_awarded or 0)
     }
 
     try:
@@ -136,14 +140,42 @@ def update_last_attempted(db, user_id):
     except Exception as e:
         return f"Ran into this error: {e}"
 
-def upload_profile_pic(user_id, profile_pic_file, bucket):
+def upload_profile_pic(user_id, profile_pic_file, bucket, max_bytes: int = 5 * 1024 * 1024):
     if not profile_pic_file:
         return None
-    blob = bucket.blob(f"profile_pics/{user_id}.jpg")
-    blob.upload_from_string(
-        profile_pic_file.read(),
-        content_type=profile_pic_file.content_type
-    )
+
+    # Enforce max size
+    data = profile_pic_file.read()
+    if len(data) > max_bytes:
+        raise ValueError("Profile picture is too large. Please upload an image under 5MB.")
+
+    # Detect format using Pillow; fall back to extension
+    ext = None
+    try:
+        with Image.open(BytesIO(data)) as img:
+            img.verify()  # validate file integrity
+            fmt = (img.format or '').upper()
+            if fmt == 'JPEG':
+                ext = 'jpg'
+            elif fmt == 'PNG':
+                ext = 'png'
+    except UnidentifiedImageError:
+        ext = None
+
+    if not ext:
+        # try from filename as a fallback check
+        filename = getattr(profile_pic_file, 'filename', '') or ''
+        if filename.lower().endswith(('.jpg', '.jpeg')):
+            ext = 'jpg'
+        elif filename.lower().endswith('.png'):
+            ext = 'png'
+
+    if ext not in {"jpg", "png"}:
+        raise ValueError("Unsupported image type. Please upload a JPG or PNG image.")
+
+    unique_key = f"profile_pics/{user_id}_{uuid.uuid4().hex}.{ext}"
+    blob = bucket.blob(unique_key)
+    blob.upload_from_string(data, content_type=f"image/{'jpeg' if ext=='jpg' else 'png'}")
     blob.make_public()
     return blob.public_url
 

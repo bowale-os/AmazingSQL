@@ -8,9 +8,19 @@
   <div class="layout">
     {% include 'sidebar.html' %}
     <div class="p-2 p-md-0">
-      <h2 class="headline-xl text-center">🏆 All Time Leaderboard</h2>
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="headline-xl m-0">🏆 Leaderboard</h2>
+        <form method="get" action="{{ url_for('leaderboard') }}" class="d-flex align-items-center gap-2">
+          <label for="period" class="form-label mb-0">Period</label>
+          <select id="period" name="period" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            <option value="all" {% if period=='all' %}selected{% endif %}>All-time</option>
+            <option value="30d" {% if period=='30d' %}selected{% endif %}>Last 30 days</option>
+            <option value="90d" {% if period=='90d' %}selected{% endif %}>Last 90 days</option>
+          </select>
+        </form>
+      </div>
       <div class="table-responsive table-modern mt-4">
-        <table class="table table-hover align-middle mb-0" aria-label="Leaderboard">
+        <table class="table table-hover align-middle mb-0 leaderboard-table" aria-label="Leaderboard">
           <thead>
             <tr>
               <th class="col-rank">Rank</th>
@@ -33,11 +43,7 @@
               </td>
               <td class="fw-bold text-center">{{ user['xp'] }}</td>
               <td class="last-solved subhead text-center">
-                {% if user['last_correct_date'] %}
-                  {{ user['last_correct_date'].strftime('%b %d, %Y') }}
-                {% else %}
-                  Never
-                {% endif %}
+                {{ user['last_correct_date_display'] or '—' }}
               </td>
             </tr>
             {% endfor %}

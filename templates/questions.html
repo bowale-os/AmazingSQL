@@ -7,13 +7,13 @@
 <div class="container py-4">
   <div class="layout">
     {% include 'sidebar.html' %}
-    <div class="p-2 p-md-0">
+    <div class="p-2 p-md-0 content-scroll">
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h2 class="headline-xl m-0">Practice SQL Questions</h2>
     <form id="search-form" action="{{ url_for('questions') }}" method="GET" novalidate class="d-flex align-items-center gap-2 flex-wrap">
       <label for="tags" class="form-label mb-0">Search</label>
       <input type="search" name="query" id="query" value="{{ query|default('') }}" class="form-control form-control-sm" placeholder="Enter question ID or comma-separated tag(s)" style="min-width: 220px;" aria-label="Search by ID or tags">
-      <label for="difficulty" class="form-label mb-0 ms-2">Difficulty</label>
+      <label for="difficulty" class="form-label mb-0">Difficulty</label>
       <select name="difficulty" id="difficulty" class="form-select form-select-sm w-auto" aria-label="Filter by difficulty" onchange="this.form.submit()">
         {% set options = ['all', 'easy', 'medium', 'hard'] %}
         {% for option in options %}
@@ -24,6 +24,22 @@
     </form>
   </div>
 
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <div class="subhead">Page {{ page }}{% if total_pages %} of {{ total_pages }}{% endif %} • 50 per page</div>
+    <div class="d-flex gap-2">
+      {% if has_prev %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('questions', page=page-1, difficulty=difficulty, query=query) }}">Previous</a>
+      {% else %}
+        <button class="btn btn-outline-light btn-sm" disabled>Previous</button>
+      {% endif %}
+      {% if has_next %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('questions', page=page+1, difficulty=difficulty, query=query) }}">Next</a>
+      {% else %}
+        <button class="btn btn-outline-light btn-sm" disabled>Next</button>
+      {% endif %}
+    </div>
+  </div>
+
   {% if questions|length == 0 %}
     <div class="glass rounded-3 p-4 text-center">
       <div class="headline-xl mb-2">No results</div>
@@ -32,7 +48,7 @@
     </div>
   {% else %}
   <div class="table-modern mt-3">
-    <table class="table table-striped table-hover align-middle mb-0" aria-label="Questions list">
+    <table class="table table-striped table-hover align-middle mb-0 questions-table" aria-label="Questions list">
       <thead>
         <tr>
           <th class="col-id">#</th>
@@ -78,6 +94,21 @@
     </table>
   </div>
   {% endif %}
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="subhead">Page {{ page }}{% if total_pages %} of {{ total_pages }}{% endif %} • 50 per page</div>
+    <div class="d-flex gap-2">
+      {% if has_prev %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('questions', page=page-1, difficulty=difficulty, query=query) }}">Previous</a>
+      {% else %}
+        <button class="btn btn-outline-light btn-sm" disabled>Previous</button>
+      {% endif %}
+      {% if has_next %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('questions', page=page+1, difficulty=difficulty, query=query) }}">Next</a>
+      {% else %}
+        <button class="btn btn-outline-light btn-sm" disabled>Next</button>
+      {% endif %}
+    </div>
+  </div>
     </div>
   </div>
 </div>

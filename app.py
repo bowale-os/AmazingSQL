@@ -9,15 +9,29 @@ from firebasesetup import firebase_admin, bucket, firestore , admin_auth, pyre_a
 import os
 db_firestore = firestore.client()
 load_dotenv()
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+if os.getenv('FLASK_ENV', 'production') != 'production':
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
 import os
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///instance/amazingsql.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+)
+
+@app.context_processor
+def inject_globals():
+    return {"current_year": datetime.now(timezone.utc).year}
+
+# Simple in-memory rate limit for login attempts per IP
+from collections import defaultdict
+_login_attempts = defaultdict(lambda: {"count": 0, "ts": datetime.now(timezone.utc)})
+_LOGIN_WINDOW_SEC = 300
+_LOGIN_MAX_ATTEMPTS = 10
 
 
 def get_question_data_with_id(id, include_question_data=False):
@@ -107,7 +121,11 @@ def signup():
             return redirect(url_for('signup'))
 
         # 3. Handle profile picture: store profile pic in storage
-        image_url = upload_profile_pic(uid, profile_pic_file,bucket)
+        try:
+            image_url = upload_profile_pic(uid, profile_pic_file, bucket)
+        except ValueError as ve:
+            flash(str(ve), 'error')
+            return redirect(url_for('signup'))
 
         # 4. Store user profile data in Firestore
         user_profile = {
@@ -158,6 +176,17 @@ def login():
     form = LogInForm()
 
     if form.validate_on_submit():
+        # rate limit by remote addr
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        info = _login_attempts[ip]
+        now_ts = datetime.now(timezone.utc)
+        if (now_ts - info["ts"]).total_seconds() > _LOGIN_WINDOW_SEC:
+            info["count"], info["ts"] = 0, now_ts
+        info["count"] += 1
+        if info["count"] > _LOGIN_MAX_ATTEMPTS:
+            flash("Too many login attempts. Please try again later.", 'error')
+            return render_template('login.html', form=form)
+
         email = form.email.data
         password = form.password.data
         
@@ -167,7 +196,7 @@ def login():
         if existing:
             try:
                 login_user = pyre_auth.sign_in_with_email_and_password(email, password)
-            except:
+            except Exception:
                 flash("Invalid email or password. Try again.", 'error')
                 return render_template('login.html', form=form)
             
@@ -186,6 +215,7 @@ def login():
             session['uid'] = uid
             session['user'] = user_profile_copy
             session['idToken'] = login_user['idToken']
+            _login_attempts[ip] = {"count": 0, "ts": datetime.now(timezone.utc)}
             flash("You were logged in successfully!", 'success')
             return redirect(url_for('dashboard'))
         else:
@@ -222,22 +252,92 @@ def leaderboard():
     if not user:
         return redirect(url_for('login'))
     
-    users_ref = db_firestore.collection('users')
-    query = users_ref.where('xp', ">", 0).order_by("xp", direction=firestore.Query.DESCENDING)
-    leaderboard = query.stream()
+    period = request.args.get('period', 'all')
+    period = period if period in { 'all', '30d', '90d' } else 'all'
 
     users = []
-    for doc in leaderboard:
-        data = doc.to_dict()
-        users.append({
-            "username": data.get("username", "Anonymous"),
-            "xp": data.get("xp", 0),
-            "streak": data.get("current_streak", 0),
-            'last_correct_date': data.get('last_correct_date'),
-            'profile_pic':data.get('profile_pic', None)
-        })
+    if period == 'all':
+        users_ref = db_firestore.collection('users')
+        query = users_ref.where('xp', ">", 0).order_by("xp", direction=firestore.Query.DESCENDING).limit(100)
+        leaderboard = query.stream()
+        for doc in leaderboard:
+            data = doc.to_dict()
+            last_dt = data.get('last_correct_date')
+            if isinstance(last_dt, datetime):
+                last_display = last_dt.strftime('%b %d, %Y')
+            else:
+                try:
+                    last_display = datetime.fromisoformat(str(last_dt)).strftime('%b %d, %Y') if last_dt else None
+                except Exception:
+                    last_display = None
+            users.append({
+                "username": data.get("username", "Anonymous"),
+                "xp": data.get("xp", 0),
+                "streak": data.get("current_streak", 0),
+                'last_correct_date_display': last_display,
+                'profile_pic':data.get('profile_pic', None)
+            })
+    else:
+        now = datetime.now(timezone.utc)
+        window_days = 30 if period == '30d' else 90
+        window_start = now - timedelta(days=window_days)
 
-    return render_template('leaderboard.html', users=users, user=user)
+        attempts_ref = db_firestore.collection('user_attempts')
+        # Avoid composite index: filter by submitted_at only, then filter passed in code
+        attempts_query = attempts_ref.where('submitted_at', '>=', window_start).order_by('submitted_at')
+        attempts = attempts_query.stream()
+
+        # Sum xp_awarded per user within window, with fallback for legacy entries
+        from collections import defaultdict
+        user_xp = defaultdict(int)
+        counted_questions_in_window = defaultdict(set)  # uid -> set(question_id) to avoid double-counting within window
+        xp_gain_map = {'easy': 10, 'medium': 20, 'hard': 50}
+        for a in attempts:
+            a_data = a.to_dict()
+            if not a_data.get('passed'):
+                continue
+            uid = a_data.get('user_id')
+            qid = a_data.get('question_id')
+            if not uid:
+                continue
+            # Prefer stored xp_awarded; otherwise, derive from difficulty once per (user, question) in window
+            xp_awarded = a_data.get('xp_awarded')
+            if xp_awarded is None:
+                # Legacy attempt without xp_awarded; approximate from difficulty and dedupe per question in window
+                if qid and qid in counted_questions_in_window[uid]:
+                    continue
+                diff = str(a_data.get('difficulty', '')).lower()
+                xp_awarded = xp_gain_map.get(diff, 0)
+                if qid:
+                    counted_questions_in_window[uid].add(qid)
+            try:
+                xp_awarded = int(xp_awarded or 0)
+            except Exception:
+                xp_awarded = 0
+            user_xp[uid] += xp_awarded
+
+        # Fetch top users' profiles
+        top = sorted(user_xp.items(), key=lambda kv: kv[1], reverse=True)[:100]
+        for uid, xp in top:
+            user_doc = db_firestore.collection('users').document(uid).get()
+            data = user_doc.to_dict() if user_doc.exists else {}
+            last_dt = data.get('last_correct_date')
+            if isinstance(last_dt, datetime):
+                last_display = last_dt.strftime('%b %d, %Y')
+            else:
+                try:
+                    last_display = datetime.fromisoformat(str(last_dt)).strftime('%b %d, %Y') if last_dt else None
+                except Exception:
+                    last_display = None
+            users.append({
+                "username": (data or {}).get("username", "Anonymous"),
+                "xp": xp,
+                "streak": (data or {}).get("current_streak", 0),
+                'last_correct_date_display': last_display,
+                'profile_pic': (data or {}).get('profile_pic', None)
+            })
+
+    return render_template('leaderboard.html', users=users, user=user, period=period)
 
 
 @app.route('/questions')
@@ -246,26 +346,66 @@ def questions():
     if not user:
         return redirect(url_for('login'))
     
-    all_questions = get_all_questions(db_firestore)
     difficulty = request.args.get("difficulty", 'all').lower()
-    query = request.args.get('query', '').lower()
+    search = request.args.get('query', '').lower().strip()
+    try:
+        page = int(request.args.get('page', 1))
+    except Exception:
+        page = 1
+    page = max(page, 1)
+    page_size = 50
 
-    if query:
-        all_questions = [
-            q for q in all_questions
-            if query.lower() == q['id'].lower() or
-            query.lower() in q.get('tags', '').lower()
-        ]
-    
+    # Fetch all questions, then filter/sort client-side by numeric id
+    q_ref = db_firestore.collection('questions')
+    docs = q_ref.stream()
+    items = []
+    for doc in docs:
+        data = doc.to_dict()
+        # Prefer document ID as numeric identifier
+        data_id = str(doc.id)
+        data['id'] = data_id
+        try:
+            data['id_num'] = int(data_id)
+        except Exception:
+            # Push non-numeric IDs to the end
+            data['id_num'] = 10**9
+        items.append(data)
+
     if difficulty != 'all':
-        all_questions = [
-            q for q in all_questions
-            if difficulty == q.get('difficulty', '').lower()
+        items = [it for it in items if str(it.get('difficulty', '')).lower() == difficulty]
+
+    if search:
+        items = [
+            it for it in items
+            if search == str(it.get('id', '')).lower()
+            or search in str(it.get('tags', '')).lower()
         ]
 
-    all_questions_sorted = sorted(all_questions, key=lambda q: int(q['id']))
+    # Sort by numeric id ascending
+    items.sort(key=lambda it: it.get('id_num', 10**9))
+
+    # Paginate
+    total = len(items)
+    start = (page - 1) * page_size
+    end = start + page_size
+    page_items = items[start:end]
+    total_pages = (total + page_size - 1) // page_size if total else 1
+    has_prev = page > 1
+    has_next = end < total
+
     solved_ids = get_solved_question_ids(db_firestore, user['id'])
-    return render_template('questions.html', questions=all_questions_sorted[:40], difficulty=difficulty, query=query, user=user, solved_ids=solved_ids)
+    return render_template(
+        'questions.html',
+        questions=page_items,
+        difficulty=difficulty,
+        query=search,
+        user=user,
+        solved_ids=solved_ids,
+        page=page,
+        has_prev=has_prev,
+        has_next=has_next,
+        total_pages=total_pages
+    )
 
 @app.route('/question/<int:id>')
 def view_question(id):
@@ -317,7 +457,8 @@ def run_sql(id):
         correct_past_attempt = next(query, None)
 
         if correct_past_attempt and passed:
-            log_user_attempt(db_firestore ,user, question_data, passed)
+            # Already solved before: log attempt with 0 XP to reflect activity without double-counting
+            log_user_attempt(db_firestore, user, question_data, passed, xp_awarded=0)
             update_last_attempted(db_firestore, user['id'])
             #Don't award XP or update streak again
             return render_template('solve-interface.html',
@@ -336,7 +477,7 @@ def run_sql(id):
             xp_gain_map = {'easy': 10, 'medium': 20, 'hard': 50}
             xp_gain = xp_gain_map.get(question_data['difficulty'], 0)
             update_streak_and_xp_if_passed(db_firestore, user, xp_gain)
-            log_user_attempt(db_firestore ,user, question_data, passed)
+            log_user_attempt(db_firestore, user, question_data, passed, xp_awarded=xp_gain)
             flash(f"🎉 +{xp_gain} XP", 'success')
             # Step 2: Re-fetch updated user data from Firestore
             user_ref = db_firestore.collection('users').document(user['id'])
@@ -363,7 +504,7 @@ def run_sql(id):
         
     
     except Exception as e:
-        log_user_attempt(db_firestore ,user, question_data, passed=False)
+        log_user_attempt(db_firestore, user, question_data, passed=False, xp_awarded=0)
         update_last_attempted(db_firestore, user['id'])
         return render_template('solve-interface.html',
                                next_question_id= int(question_data['id']) + 1,
@@ -380,7 +521,7 @@ def run_sql(id):
 
 @app.route('/profile', methods=["POST", "GET"])
 def profile():
-    user = session['user']
+    user = session.get('user')
     if not user:
         return redirect(url_for('login'))
 
@@ -399,6 +540,15 @@ def profile():
     user_doc = user_ref.get()
     if user_doc.exists:
         user_data = user_doc.to_dict()
+        # Provide string display for created_at if present
+        created = user_data.get('created_at')
+        if isinstance(created, datetime):
+            user_data['created_at_display'] = created.strftime('%B %d, %Y')
+        else:
+            try:
+                user_data['created_at_display'] = datetime.fromisoformat(str(created)).strftime('%B %d, %Y') if created else None
+            except Exception:
+                user_data['created_at_display'] = None
     else:
         user_data = None
 

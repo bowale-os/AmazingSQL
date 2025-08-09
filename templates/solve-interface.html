@@ -76,7 +76,7 @@
         <div class="card-modern sql-card">
           <div class="p-2 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">Your SQL</div>
           <div class="p-2">
-            <textarea id="sql-textarea" style="color: var(--text);" name="sql_query" class="form-control" rows="10" placeholder="Write your SQL here...">{{ user_query or '' }}</textarea>
+            <textarea id="sql-textarea" style="color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;" name="sql_query" class="form-control" rows="10" placeholder="Write your SQL here...">{{ user_query or '' }}</textarea>
           </div>
           <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
             <button id="run-sql-btn" type="submit" class="btn btn-gradient w-100" aria-label="Run SQL (Ctrl or Cmd + Enter)" accesskey="r">Run SQL</button>

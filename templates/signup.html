@@ -23,14 +23,14 @@
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label" for="first_name">First name</label>
-          {{ form.first_name(id='first_name', class_='form-control') }}
+          {{ form.first_name(id='first_name', class_='form-control', autocomplete='given-name') }}
           {% for error in form.first_name.errors %}
             <div class="text-warning small">{{ error }}</div>
           {% endfor %}
         </div>
         <div class="col-md-6">
           <label class="form-label" for="last_name">Last name</label>
-          {{ form.last_name(id='last_name', class_='form-control') }}
+          {{ form.last_name(id='last_name', class_='form-control', autocomplete='family-name') }}
           {% for error in form.last_name.errors %}
             <div class="text-warning small">{{ error }}</div>
           {% endfor %}
@@ -38,7 +38,7 @@
 
         <div class="col-12">
           <label class="form-label" for="email">Email</label>
-          {{ form.email(id='email', class_='form-control') }}
+          {{ form.email(id='email', class_='form-control', type='email', autocomplete='email') }}
           {% for error in form.email.errors %}
             <div class="text-warning small">{{ error }}</div>
           {% endfor %}
@@ -47,7 +47,7 @@
         <div class="col-md-6">
           <label class="form-label" for="password">Password</label>
           <div class="password-wrapper">
-            {{ form.password(id='password', class_='form-control') }}
+            {{ form.password(id='password', class_='form-control', autocomplete='new-password') }}
             <button type="button" class="toggle-password" aria-label="Show password">
               <i class="bi bi-eye-slash"></i>
             </button>
@@ -59,7 +59,7 @@
 
         <div class="col-md-6">
           <label class="form-label" for="username">Username</label>
-          {{ form.username(id='username', class_='form-control') }}
+          {{ form.username(id='username', class_='form-control', autocomplete='username') }}
           {% for error in form.username.errors %}
             <div class="text-warning small">{{ error }}</div>
           {% endfor %}
@@ -67,11 +67,12 @@
 
         <div class="col-12 d-flex align-items-center">
           <label for="profile-pic" class="btn btn-outline-light me-3">Choose Profile Picture</label>
-          {{ form.profile_pic(id='profile-pic', class_='visually-hidden') }}
+          {{ form.profile_pic(id='profile-pic', class_='visually-hidden', accept='image/*') }}
           <span class="subhead" id="file-name">No file chosen</span>
           {% for error in form.profile_pic.errors %}
             <div class="text-warning small w-100 mt-1">{{ error }}</div>
           {% endfor %}
+          <div id="file-error" class="text-warning small w-100 mt-1 d-none"></div>
         </div>
 
         <div class="col-12">
@@ -99,9 +100,48 @@
 <script>
   const fileInput = document.getElementById('profile-pic');
   const fileNameSpan = document.getElementById('file-name');
+  const fileError = document.getElementById('file-error');
+  let previewImg = document.getElementById('profile-preview');
+  if (!previewImg) {
+    previewImg = document.createElement('img');
+    previewImg.id = 'profile-preview';
+    previewImg.alt = 'Preview';
+    previewImg.style.width = '48px';
+    previewImg.style.height = '48px';
+    previewImg.style.borderRadius = '50%';
+    previewImg.style.objectFit = 'cover';
+    previewImg.className = 'ms-3 d-none';
+    (fileNameSpan && fileNameSpan.parentElement) && fileNameSpan.parentElement.appendChild(previewImg);
+  }
   if (fileInput) {
     fileInput.addEventListener('change', () => {
-      fileNameSpan.textContent = fileInput.files?.length ? fileInput.files[0].name : 'No file chosen';
+      const file = fileInput.files && fileInput.files[0];
+      fileError.classList.add('d-none');
+      fileError.textContent = '';
+      if (!file) {
+        fileNameSpan.textContent = 'No file chosen';
+        previewImg.classList.add('d-none');
+        previewImg.removeAttribute('src');
+        return;
+      }
+      const validMime = file.type && file.type.startsWith('image/');
+      const validExt = /\.(jpe?g|png)$/i.test(file.name || '');
+      if (!validMime || !validExt) {
+        fileInput.value = '';
+        fileNameSpan.textContent = 'No file chosen';
+        fileError.textContent = 'Please choose a JPG or PNG image.';
+        fileError.classList.remove('d-none');
+        previewImg.classList.add('d-none');
+        previewImg.removeAttribute('src');
+        return;
+      }
+      fileNameSpan.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = () => {
+        previewImg.src = reader.result;
+        previewImg.classList.remove('d-none');
+      };
+      reader.readAsDataURL(file);
     });
   }
 </script>
