@@ -19,7 +19,7 @@
               <th class="col-last">Last XP</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="mobile-small">
             {% for user in users %}
             <tr>
               <td class="text-center">
@@ -28,7 +28,7 @@
               <td class="col-user">
                 <div class="user-cell">
                   {{ profile_pic(user, size=32) }}
-                  <span class="username">@{{ user['username'] }}</span>
+                  <span class=" username">@{{ user['username'] }}</span>
                 </div>
               </td>
               <td class="fw-bold text-center">{{ user['xp'] }}</td>

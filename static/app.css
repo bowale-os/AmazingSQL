@@ -31,9 +31,7 @@
   --shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-.theme-dark {
-  /* already covered by default variables */
-}
+/* .theme-dark intentionally uses root variables */
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -193,18 +191,29 @@ textarea::placeholder {
 .layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  gap: 16px;
+  gap: 30px;
   align-items: start;
   overflow: hidden; /* prevent children from causing horizontal overflow */
 }
+
 @media (max-width: 991px) {
   /* Bring content closer to navbar and use grid gap for separation */
-  .container.py-4 { padding-top: 8px; }
-  .layout { grid-template-columns: 1fr; row-gap: 40px; }
-  .app-sidebar { position: static; top: auto; margin-top: 0; margin-bottom: 0; }
+  .container.py-4 { padding-top: 0; margin-top: 0;}
+  .layout { grid-template-columns: 1fr; row-gap: 40px; padding-top: 0; margin-top:-70px;}
+  .app-sidebar { top: auto; margin-top: 0; margin-bottom: 10rem; }
   .content-scroll { max-height: none; overflow: visible; }
   /* add gentle top padding to main content when stacked */
   .layout > :not(.app-sidebar) { padding-top: 16px; }
+  .layout > .app-sidebar { padding-top: 0px; }
+  .mobile-small{font-size: 0.7rem;}
+}
+
+@media (min-width: 991px) {
+  .big-dash{margin-top: 127px;}
+}
+
+.nav-mb{
+  margin-bottom: 10rem;
 }
 
 .app-sidebar {
@@ -268,4 +277,25 @@ textarea::placeholder {
 .stack-md > * + * { margin-top: 16px; }
 .stack-lg > * + * { margin-top: 24px; }
 
+
+/* Improve table readability on small screens */
+@media (max-width: 576px) {
+  /* Let the browser size columns naturally */
+  .table-modern table { table-layout: auto; }
+
+  /* Make ID column a bit narrower */
+  .table-modern .col-id { width: 44px; }
+
+  /* Hide Tags (3rd) and the last icon column (5th) */
+  .table-modern table thead th:nth-child(3),
+  .table-modern table tbody td:nth-child(3),
+  .table-modern table thead th:nth-child(5),
+  .table-modern table tbody td:nth-child(5) { display: none; } /* Hide the last icon column */
+
+  /* Allow question titles to wrap instead of truncating */
+  .table-modern .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
+
+  /* Keep difficulty compact */
+  .table-modern .col-xp { width: 96px; }
+}
 
