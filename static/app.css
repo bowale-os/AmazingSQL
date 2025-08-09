@@ -199,7 +199,7 @@ textarea::placeholder {
 }
 @media (max-width: 991px) {
   .layout { grid-template-columns: 1fr; row-gap: 32px; }
-  .app-sidebar { position: static; top: auto; margin-bottom: 40px; }
+  .app-sidebar { position: static; top: auto; margin-bottom: 45px; }
   .content-scroll { max-height: none; overflow: visible; }
 }
 
