@@ -14,26 +14,176 @@
       <p class="subhead mx-auto" style="max-width: 760px;">
         Learn SQL the unforgettable way — solve real-world challenges, get instant feedback, and climb the leaderboard.
       </p>
-      <div class="d-flex cta mt-4">
-        <a href="{{ url_for('signup') }}" class="btn btn-gradient px-4 py-2">Get Started</a>
-        <a href="{{ url_for('login') }}" class="btn btn-outline-light px-4 py-2">Log in</a>
+      <div class="d-flex cta mt-5 gap-3 flex-wrap justify-content-center">
+        <button id="get-started-tour" class="btn btn-gradient px-4 py-2 fs-4">Get Started</button>
+        <a href="{{ url_for('login') }}" class="btn btn-outline-light px-4 py-2 fw-bold fs-5">Log in</a>
       </div>
     </div>
   </div>
 
-  <div id="features" class="feature-grid">
+  <div id="features" class="feature-grid mt-5">
     <div class="feature-card">
-      <h3>⚡ Instant Feedback</h3>
+      <div class="feature-icon">⚡</div>
+      <h3>Instant Feedback</h3>
       <p>Submit queries and get graded in real-time with actionable explanations.</p>
     </div>
     <div class="feature-card">
-      <h3>🧠 Real SQL Problems</h3>
+      <div class="feature-icon">🧠</div>
+      <h3>Real SQL Problems</h3>
       <p>Practice with challenges inspired by real datasets and interviews.</p>
     </div>
     <div class="feature-card">
-      <h3>📊 Progress Tracking</h3>
+      <div class="feature-icon">📊</div>
+      <h3>Progress Tracking</h3>
       <p>Earn XP, keep streaks, and see your growth over time.</p>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <h3>Smart Tagging</h3>
+      <p>Find questions by topic with our intelligent tag system.</p>
+    </div>
   </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Handle Get Started button to show tutorial
+  document.addEventListener('DOMContentLoaded', function() {
+    const getStartedButton = document.getElementById('get-started-tour');
+    if (getStartedButton) {
+      getStartedButton.addEventListener('click', function() {
+        // Trigger the tutorial from base template
+        const tutorialOverlay = document.getElementById('tutorial-overlay');
+        if (tutorialOverlay) {
+          tutorialOverlay.style.display = 'block';
+          
+          // Reset to first step
+          const tutorialTitle = document.getElementById('tutorial-title');
+          const tutorialContent = document.getElementById('tutorial-content');
+          const tutorialProgress = document.getElementById('tutorial-progress');
+          const tutorialPrev = document.getElementById('tutorial-prev');
+          const tutorialNext = document.getElementById('tutorial-next');
+          
+          if (tutorialTitle && tutorialContent && tutorialProgress && tutorialPrev && tutorialNext) {
+            // Show first step
+            tutorialTitle.textContent = "Welcome to AmazingSQL!";
+            tutorialContent.textContent = "Let's take a quick tour to help you get started with learning SQL effectively.";
+            tutorialProgress.textContent = "Step 1 of 5";
+            tutorialPrev.style.display = 'none';
+            tutorialNext.style.display = 'inline-block';
+            tutorialNext.textContent = 'Next';
+            
+            // Remove any existing action buttons
+            const actionButtons = document.querySelector('.tutorial-actions');
+            if (actionButtons) {
+              actionButtons.remove();
+            }
+            
+            // Set up navigation for this tutorial session
+            let currentStep = 0;
+            const tutorialSteps = [
+              {
+                title: "Welcome to AmazingSQL!",
+                content: "Let's take a quick tour to help you get started with learning SQL effectively."
+              },
+              {
+                title: "Practice Questions",
+                content: "Browse our collection of SQL challenges. Use tags to find specific topics and filter by difficulty level."
+              },
+              {
+                title: "Interactive Learning",
+                content: "Submit your SQL queries and get instant feedback. Learn from your mistakes and improve your skills."
+              },
+              {
+                title: "Track Progress",
+                content: "Earn XP, maintain streaks, and see your learning journey progress over time."
+              },
+              {
+                title: "Ready to Get Started?",
+                content: "You're all set! Sign up to start practicing SQL or log in if you already have an account."
+              }
+            ];
+            
+                         function showTutorialStep(step) {
+               tutorialTitle.textContent = tutorialSteps[step].title;
+               tutorialContent.textContent = tutorialSteps[step].content;
+               tutorialProgress.textContent = `Step ${step + 1} of ${tutorialSteps.length}`;
+               
+               // Remove any existing action buttons first
+               const existingActions = document.querySelector('.tutorial-actions');
+               if (existingActions) {
+                 existingActions.remove();
+               }
+               ms
+               if (step === 0) {
+                 // Step 1: No previous button, show next button
+                 tutorialPrev.style.display = 'none';
+                 tutorialNext.style.display = 'inline-block';
+                 tutorialNext.textContent = 'Next';
+               } else if (step === tutorialSteps.length - 1) {
+                 // Step 5: Show previous button, hide next button, add action buttons
+                 tutorialPrev.style.display = 'inline-block';
+                 tutorialNext.style.display = 'none';
+                 
+                 // Add action buttons below the content
+                //  const actionButtons = `
+                //    <div class="tutorial-actions mt-3">
+                //      <a href="{{ url_for('signup') }}" class="btn btn-accent me-2">Sign Up</a>
+                //      <a href="{{ url_for('login') }}" class="btn btn-outline-light">Log In</a>
+                //    </div>
+                //  `;
+                 
+                 // Insert action buttons after the content
+                 tutorialContent.insertAdjacentHTML('afterend', actionButtons);
+               } else {
+                 // Steps 2, 3, 4: Show both previous and next buttons (like step 4)
+                 tutorialPrev.style.display = 'inline-block';
+                 tutorialNext.style.display = 'inline-block';
+                 tutorialNext.textContent = 'Next';
+               }
+             }
+            
+            function nextStep() {
+              if (currentStep < tutorialSteps.length - 1) {
+                currentStep++;
+                showTutorialStep(currentStep);
+              } else {
+                hideTutorial();
+              }
+            }
+            
+            function prevStep() {
+              if (currentStep > 0) {
+                currentStep--;
+                showTutorialStep(currentStep);
+              }
+            }
+            
+            function hideTutorial() {
+              tutorialOverlay.style.display = 'none';
+            }
+            
+            // Set up event listeners for this tutorial session
+            tutorialNext.onclick = nextStep;
+            tutorialPrev.onclick = prevStep;
+            
+            // Set up close button
+            const tutorialClose = document.getElementById('tutorial-close');
+            if (tutorialClose) {
+              tutorialClose.onclick = hideTutorial;
+            }
+            
+            // Close tutorial on overlay click
+            tutorialOverlay.onclick = function(e) {
+              if (e.target === tutorialOverlay) {
+                hideTutorial();
+              }
+            };
+          }
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
 

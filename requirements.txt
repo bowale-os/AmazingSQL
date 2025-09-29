@@ -7,7 +7,7 @@ python-dotenv==1.0.1
 gunicorn==23.0.0
 SQLAlchemy==2.0.41
 WTForms==3.2.1
-requests==2.29.0
+requests>=2.29,<2.30
 oauthlib==3.2.2
 email-validator==2.1.1
 firebase-admin==6.5.0

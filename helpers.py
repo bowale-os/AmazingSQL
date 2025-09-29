@@ -3,6 +3,7 @@ import uuid
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
 import sqlite3
+import re
 
 def log_user_attempt(db, user, question_data, passed, xp_awarded: int = 0):
     # Log attempt to Firestore, pass or fail
@@ -25,25 +26,97 @@ def log_user_attempt(db, user, question_data, passed, xp_awarded: int = 0):
         print(f"Error logging attempt: {e}")   
 
 def execute_sql(schema_sql, seed_sql, user_query):
+    rows, columns = [], []
     with sqlite3.connect(':memory:') as conn:
         cursor = conn.cursor()
-        cursor.executescript(schema_sql)
-        cursor.executescript(seed_sql)
-        conn.commit()
+        try:
+            cursor.executescript(schema_sql)
+            cursor.executescript(seed_sql)
+            conn.commit()
+        except sqlite3.DatabaseError as e:
+            print(f"Error executing SQL: {e}")
+            return [], []
+        try:
+            cursor.execute(user_query)
+            if user_query.strip().lower().startswith("select"):
+                rows = cursor.fetchall()
+                columns = [desc[0] for desc in cursor.description]
+            else:
+                rows, columns = [], []
 
-        cursor.execute(user_query)
-        if user_query.strip().lower().startswith("select"):
-            rows = cursor.fetchall()
-            columns = [desc[0] for desc in cursor.description]
-        else:
-            rows, columns = [], []
+        except sqlite3.OperationalError as e:
+            return [], [], f"SQL syntax error: {e}"
+        except sqlite3.ProgrammingError as e:
+            return [], [], f"Programming error: {e}"
+        except Exception as e:
+            return [], [], f"Unexpected error: {e}"
 
     return rows, columns
 
-def validate_sql_input(user_query):
+
+
+def validate_sql_input(user_query, allowed_types=("select",)):
+    """
+    Validates a user-submitted SQL query for use in a sandboxed in-memory SQLite context.
+    Returns: (is_valid: bool, error_message: str or None)
+    """
     if not user_query or not user_query.strip():
         return False, "Please enter a SQL query."
+
+    query = user_query.strip()
+    lowered = query.lower()
+
+    # Allow only specific SQL commands (default: SELECT only)
+    statement_type = lowered.split()[0]
+    if statement_type not in allowed_types:
+        return (
+            False,
+            f"Only the following commands are allowed: {', '.join(allowed_types).upper()}. Please start your query with this."
+        )
+
+    # Disallow multiple statements (semi-colon injection)
+    if ';' in lowered[:-1]:  # Allow a trailing semicolon for style
+        return (
+            False,
+            "Only single SQL statements are allowed. Please submit one query at a time."
+        )
+
+    # Disallow destructive, managing, or privacy-violating SQL keywords
+    forbidden_patterns = [
+        r"\bdrop\b", r"\bdelete\b", r"\binsert\b", r"\bupdate\b", r"\balter\b", r"\btruncate\b",
+        r"\battach\b", r"\bdetach\b", r"\bpragma\b", r"\bcreate\s+user\b", r"\bgrant\b",
+        r"\brevoke\b"
+    ]
+    for pat in forbidden_patterns:
+        if re.search(pat, lowered):
+            return (
+                False,
+                "Modifying, deleting, or managing the database structure is not allowed. Please submit safe queries."
+            )
+
+    # Require a FROM clause in SELECTs
+    if statement_type == "select" and "from" not in lowered:
+        return (
+            False,
+            "Your SELECT query seems to be missing a FROM clause. Example: SELECT * FROM question_table"
+        )
+
+    # Minimum length: prevent single-word or incomplete queries
+    if len(query.split()) < 3:
+        return (
+            False,
+            "Your query looks too short or incomplete. Please provide a full SQL statement, e.g., SELECT column FROM table."
+        )
+
+    # Basic pattern check for balanced parentheses
+    if query.count('(') != query.count(')'):
+        return (
+            False,
+            "Your query has unbalanced parentheses. Please check your brackets."
+        )
+
     return True, None
+
 
 def update_streak_and_xp_if_passed(db, user, xp_gain):
     now = datetime.now(timezone.utc)
