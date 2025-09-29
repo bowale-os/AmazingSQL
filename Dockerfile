@@ -18,13 +18,13 @@ RUN apt-get update && apt-get install -y \
 RUN python3 -m pip install --upgrade pip setuptools wheel
 
 # Copy requirements first (for better caching)
-COPY AmazingSQL/requirements.txt .
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
 
 # Copy the rest of the application
-COPY AmazingSQL/ .
+COPY . .
 
 # Run the application with gunicorn
 CMD ["gunicorn", "app:app"]
